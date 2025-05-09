@@ -22,13 +22,13 @@ public class DetalleMatricula {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "matricula_id")
-    private Matricula matricula;
-
-    @ManyToOne
     @JoinColumn(name = "seccion_id")
     private Seccion seccion;
 
+    @ManyToOne
+    @JoinColumn(name = "matricula_id")
+    private Matricula matricula;
+    
     @ManyToOne
     @JoinColumn(name = "curso_id")
     private Cursos curso;

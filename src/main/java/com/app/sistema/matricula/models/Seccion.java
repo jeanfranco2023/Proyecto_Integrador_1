@@ -20,12 +20,15 @@ public class Seccion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idSeccion;
+
     private String nombreSeccion;
     private String gradoSeccion;
     private String turnoSeccion;
+
     @OneToMany(mappedBy = "seccion")
     private List<DetalleCursoSeccion> detalleSeccion;
-    @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "seccion", cascade = CascadeType.ALL)
     private List<DetalleMatricula> detalleMatricula;
 
 }
