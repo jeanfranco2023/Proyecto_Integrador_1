@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Registro Alumno</title>
+</head>
+<body>
+    <main class="container w-50 mt-5 mb-5">
+        <h1 class="text-center mb-4">Registro de Alumno</h1>
+        <form th:action="@{/alumnos/guardarAlumno}" th:object="${alumno}" method="POST" class="needs-validation" novalidate>
+            <input type="hidden" th:field="*{idAlumno}">
+            
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" th:field="*{nombreAlumno}"  class="form-control" id="nombre" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="apellido" class="form-label">Apellido:</label>
+                <input type="text" th:field="*{apellidoAlumno}" class="form-control" id="apellido" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="dni" class="form-label">DNI:</label>
+                <input type="text" th:field="*{dniAlumno}" class="form-control" id="dni" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="email" class="form-label">Correo Electrónico:</label>
+                <input type="email" th:field="*{correoAlumno}" class="form-control" id="email" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" th:field="*{passwordAlumno}" class="form-control" id="password" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="padre" class="form-label">Nombre del Apoderado:</label>
+                <input type="text" th:field="*{nombreApoderado}" class="form-control" id="padre" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento:</label>
+                <input type="date" th:field="*{fechaNacimiento}" class="form-control" id="fechaNacimiento" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary w-100">Registrar</button>
+        </form>
+    </main>
+
+</body>
+</html>

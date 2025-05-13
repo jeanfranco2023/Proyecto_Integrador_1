@@ -1,5 +1,6 @@
 package com.app.sistema.matricula.models;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.Entity;
@@ -36,5 +37,7 @@ public class Alumnos {
 
     @OneToMany(mappedBy = "alumno")
     private List<Nota> notas;
+    private String rol;
+    private LocalDate fechaNacimiento;
 
 }
