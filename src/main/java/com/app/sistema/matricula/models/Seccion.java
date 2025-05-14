@@ -30,5 +30,4 @@ public class Seccion {
 
     @OneToMany(mappedBy = "seccion", cascade = CascadeType.ALL)
     private List<DetalleMatricula> detalleMatricula;
-
 }

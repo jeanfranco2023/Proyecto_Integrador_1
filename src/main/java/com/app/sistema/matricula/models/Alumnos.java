@@ -37,6 +37,7 @@ public class Alumnos {
 
     @OneToMany(mappedBy = "alumno")
     private List<Nota> notas;
+
     private String rol;
     private LocalDate fechaNacimiento;
 

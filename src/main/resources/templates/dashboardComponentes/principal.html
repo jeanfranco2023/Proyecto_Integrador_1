@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+  <div th:fragment="componente" th:remove="tag">
+    <h2 class="mb-4 ms-4 mt-5 fs-1 fw-bold text-ceter">Bienvenido al sistema escolar</h2>
+    <div th:if="${rol == 'Alumno' or rol == 'Docente'}">
+      <div class="row row-cols-1 row-cols-md-3 g-4">
+        <div class="col" th:each="curso : ${cursos}">
+          <a th:href="@{/cursos/{id}(id=${curso.id})}" class="text-decoration-none text-dark">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <h5 class="card-title" th:text="${curso.nombre}">Curso</h5>
+                <p class="card-text" th:text="${curso.descripcion}">Descripción del curso</p>
+              </div>
+              <div class="card-footer text-muted">
+                <span th:text="${curso.profesor}">Nombre del profesor</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADMINISTRADOR -->
+    <div th:if="${rol == 'Administrador'}">
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="card text-bg-primary shadow">
+            <div class="card-body">
+              <h5 class="card-title">Total Alumnos</h5>
+              <p class="card-text fs-4" th:text="${totalAlumnos}">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-bg-success shadow">
+            <div class="card-body">
+              <h5 class="card-title">Total Docentes</h5>
+              <p class="card-text fs-4" th:text="${totalDocentes}">0</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card text-bg-warning shadow">
+            <div class="card-body">
+              <h5 class="card-title">Cursos Activos</h5>
+              <p class="card-text fs-4" th:text="${totalCursos}">0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

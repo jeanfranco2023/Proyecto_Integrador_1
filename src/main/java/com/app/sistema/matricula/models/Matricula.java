@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Data
@@ -34,8 +35,13 @@ public class Matricula {
     private String periodoAcademico;
 
     @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private List<DetalleMatricula> detalles;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL)
     private List<Nota> notas;
+    @ManyToOne
+    @JoinColumn(name = "administrador_id")
+    private Administrador administrador;
 }

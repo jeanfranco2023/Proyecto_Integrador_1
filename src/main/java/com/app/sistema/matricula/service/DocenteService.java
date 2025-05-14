@@ -1,10 +1,16 @@
 package com.app.sistema.matricula.service;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.sistema.matricula.models.Cursos;
+import com.app.sistema.matricula.models.DetalleCursoSeccion;
+import com.app.sistema.matricula.models.DetalleMatricula;
 import com.app.sistema.matricula.models.Docentes;
 import com.app.sistema.matricula.repository.DocenteRepository;
 
@@ -37,11 +43,31 @@ public class DocenteService implements IService<Docentes> {
     public List<Docentes> buscarPorNombre(String nombre) {
         return docenteRepository.findByNombreDocente(nombre);
     }
+
     public List<Docentes> buscarPorApellido(String apellido) {
         return docenteRepository.findByApellidoDocente(apellido);
     }
+
     public List<Docentes> buscarPorCorreo(String correo) {
         return docenteRepository.findByCorreoDocente(correo);
     }
 
+    public Object contarDocentes() {
+        return docenteRepository.count();
+    }
+
+    public List<Cursos> obtenerCursosPorId(Integer id) {
+        Docentes docente = docenteRepository.findById(id).orElse(null);
+        if (docente == null) {
+            return Collections.emptyList();
+        }
+        return docente.getDetalles().stream()
+                .map(DetalleCursoSeccion::getSeccion)
+                .filter(Objects::nonNull)
+                .flatMap(seccion -> seccion.getDetalleMatricula().stream())
+                .map(DetalleMatricula::getCurso)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 }

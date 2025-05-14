@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas - Dashboard</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div th:fragment="componente" th:remove="tag">
+    <main>
+        <section>
+            <div th:if="${notas}">
+                <h2>Lista de Notas</h2>
+                <div th:each="nota : ${notas}">
+                    <div>
+                        <h3 th:text="${nota.nombre}"></h3>
+                        <p th:text="'Nota: ' + ${nota.valor}"></p>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${notas == null or #lists.isEmpty(notas)}">
+                <p class="fs-1 fw-bold mt-3 text-center">Bienvenido aun no se te asignan tus cursos</p>
+            </div>
+        </section>
+    </main>
+</div>
+</body>
+</html>

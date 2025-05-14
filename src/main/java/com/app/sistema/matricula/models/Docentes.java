@@ -33,5 +33,5 @@ public class Docentes {
     private String especialidadDocente;
     @OneToMany(mappedBy = "docente")
     private List<DetalleCursoSeccion> detalles;
-
+    private String rol;
 }

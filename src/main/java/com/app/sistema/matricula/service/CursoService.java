@@ -34,4 +34,8 @@ public class CursoService implements IService<Cursos> {
         cursoRepository.delete(curso);
     }
 
+    public Object contarCursos() {
+       return cursoRepository.count();
+    }
+
 }
