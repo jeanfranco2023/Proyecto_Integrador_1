@@ -10,6 +10,7 @@ public interface AlumnoRepository extends JpaRepository<Alumnos, Integer> {
 
     List<Alumnos> findByNombreAlumno(String nombreAlumno);
     List<Alumnos> findByCorreoAlumno(String correoAlumno);
+    boolean existsByDniAlumno(String dni);
 
     
 

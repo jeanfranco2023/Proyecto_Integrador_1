@@ -35,7 +35,15 @@ public class CursoService implements IService<Cursos> {
     }
 
     public Object contarCursos() {
-       return cursoRepository.count();
+        return cursoRepository.count();
+    }
+
+    public List<String> obtenerGradosUnico() {
+        return cursoRepository.findDistinctGradoCurso();
+    }
+
+    public List<Cursos> obtenerCursosPorGrado(String grado) {
+        return cursoRepository.findByGradoCurso(grado);
     }
 
 }

@@ -1,23 +1,61 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notas - Dashboard</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
+<html xmlns:th="http://www.thymeleaf.org">
+
 <body>
     <div th:fragment="componente" th:remove="tag">
-        <header>
-            <h1>Notas</h1>
-            <p>Bienvenido al sistema de gestión de notas.</p>
-        </header>
-    <main>
-        <section>
-            <h2>Lista de Notas</h2>
-            <!-- Aquí puedes agregar la tabla o lista de notas -->
-        </section>
-    </main>
-</div>
+        <div class="container mt-4">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Registrar Nuevo Curso</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Mensajes de éxito/error -->
+                            <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+                            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+                            <form th:action="@{/cursos/guardar}" method="POST" th:object="${curso}">
+                                <!-- Nombre del Curso -->
+                                <div class="mb-3">
+                                    <label for="nombreCurso" class="form-label required-field">Nombre del Curso</label>
+                                    <input type="text" class="form-control" id="nombreCurso" th:field="*{nombreCurso}" required>
+                                    <small class="text-muted">Ej: Matemáticas, Comunicación, Ciencias</small>
+                                </div>
+
+                                <!-- Grado del Curso -->
+                                <div class="mb-3">
+                                    <label for="gradoCurso" class="form-label required-field">Grado/Nivel</label>
+                                    <select class="form-select" id="gradoCurso" th:field="*{gradoCurso}" required>
+                                        <option value="">Seleccione un grado...</option>
+                                        <option value="Inicial 3 años">Inicial 3 años</option>
+                                        <option value="Inicial 4 años">Inicial 4 años</option>
+                                        <option value="Inicial 5 años">Inicial 5 años</option>
+                                        <option value="Primer Grado">Primer Grado</option>
+                                        <option value="Segundo Grado">Segundo Grado</option>
+                                        <option value="Tercer Grado">Tercer Grado</option>
+                                        <option value="Cuarto Grado">Cuarto Grado</option>
+                                        <option value="Quinto Grado">Quinto Grado</option>
+                                        <option value="Sexto Grado">Sexto Grado</option>
+                                        <option value="Primer Año Secundaria">Primer Año Secundaria</option>
+                                        <option value="Segundo Año Secundaria">Segundo Año Secundaria</option>
+                                        <option value="Tercer Año Secundaria">Tercer Año Secundaria</option>
+                                        <option value="Cuarto Año Secundaria">Cuarto Año Secundaria</option>
+                                        <option value="Quinto Año Secundaria">Quinto Año Secundaria</option>
+                                    </select>
+                                </div>
+
+                                <!-- Botones -->
+                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                                    <a th:href="@{/cursos}" class="btn btn-secondary me-md-2">Cancelar</a>
+                                    <button type="submit" class="btn btn-primary">Guardar Curso</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

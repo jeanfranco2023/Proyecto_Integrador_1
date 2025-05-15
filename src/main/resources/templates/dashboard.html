@@ -1,98 +1,152 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard - Bootstrap</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body {
-            min-height: 100vh;
-            background-color:rgb(223, 247, 250);
+        html, body {
+            height: 100%;
+            margin: 0;
         }
 
         .sidebar {
-            height: 100vh;
+            min-height: 100vh;
             background-color: #011C40;
-            padding-top: 1rem;
         }
 
         .sidebar .nav-link {
-            color: #adb5bd;
+            color: #ffffff;
         }
 
-        .sidebar .nav-link.active {
-            color: #fff;
+        .sidebar .nav-link:hover {
             background-color: #495057;
+            color: #ffffff;
+        }
+
+        .sidebar h5 {
+            font-size: 1rem;
+            color: #ffffff;
         }
 
         .content {
-            padding: 2rem;
+            padding: 20px;
+            background-color: #f8f9fa;
+            min-height: 100vh;
         }
     </style>
 </head>
-
 <body>
 
-    <div class="container-fluid">
-        <div class="row">
-            <nav class="col-md-2 d-none d-md-block sidebar">
-                <div class="text-center mb-3">
-                    <i class="bi bi-speedometer2 text-white fs-1" style="width: 80px; height: 80px;"></i>
-                    <h5 class="text-light mt-2">Colegio Victor Raul Haya de la Torre</h5>
+<div class="container-fluid">
+    <div class="row">
+        <!-- Barra lateral -->
+        <nav class="col-md-2 d-none d-md-block sidebar">
+            <div class="d-flex flex-column align-items-center text-center mb-4 mt-4 px-2">
+                <img src="/img/insignia.png" alt="Logo" class="img-fluid mb-2" style="width: 50%;">
+                <h5 class="text-light fs-6 text-center">Victor Raul Haya de la Torre</h5>
+            </div>
+            <ul class="nav flex-column px-2">
+                <li th:if="${rol == 'Administrador'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=principal}">
+                        <i class="bi bi-house"></i> Inicio
+                    </a>
+                </li>
+                <li th:if="${rol == 'Alumno'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=principal}">
+                        <i class="bi bi-journal-bookmark"></i> Mis cursos
+                    </a>
+                </li>
+                <li th:if="${rol == 'Alumno'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=notas}">
+                        <i class="bi bi-pencil-square"></i> Mis Notas
+                    </a>
+                </li>
+                <li th:if="${rol == 'Docente'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=registro-notas}">
+                        <i class="bi bi-journal-check"></i> Registrar Notas
+                    </a>
+                </li>
+                <li th:if="${rol == 'Administrador'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=reportes}">
+                        <i class="bi bi-card-checklist"></i> Notas
+                    </a>
+                </li>
+                <li th:if="${rol == 'Administrador'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=reportes}">
+                        <i class="bi bi-people"></i> Estudiantes
+                    </a>
+                </li>
+                <li th:if="${rol == 'Administrador'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=reportes}">
+                        <i class="bi bi-person-badge"></i> Docentes
+                    </a>
+                </li>
+                <li th:if="${rol == 'Administrador'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=matricula}">
+                        <i class="bi bi-journal-plus"></i> Matrícula
+                    </a>
+                </li>
+                <li th:if="${rol == 'Administrador'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=cursos}">
+                        <i class="bi bi-book"></i> Registrar Curso
+                    </a>
+                </li>
+                <li th:if="${rol == 'Administrador'}" class="nav-item">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=reportes}">
+                        <i class="bi bi-bar-chart-line"></i> Reportes
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Contenido principal -->
+        <main class="col-md-10 content">
+            <div class="dropdown d-flex align-items-center justify-content-end">
+                <div class="d-flex flex-column align-items-end me-4">
+                    <span class="text-dark fs-6">Hola, <span th:text="${usuarioIniciado}" class="fw-bold"></span></span>
+                    <span class="text-dark fs-6"><span th:text="${rol}"></span></span>
                 </div>
-                <ul class="nav flex-column">
-                    <li th:if="${rol == 'Alumno'}" class="nav-item">
-                        <a class="nav-link text-white" th:href="@{/usuarios/dashboard?seccion=principal}">Mis cursos</a>
-                    </li>
-                    <li th:if="${rol == 'Alumno'}" class="nav-item">
-                        <a class="nav-link text-white" th:href="@{/usuarios/dashboard?seccion=notas}">Mis Notas</a>
-                    </li>
-                    <li th:if="${rol == 'Docente'}" class="nav-item">
-                        <a class="nav-link text-white" th:href="@{/usuarios/dashboard?seccion=registro-notas}">Registrar Notas</a>
-                    </li>
-                    <li th:if="${rol == 'Administrador'}" class="nav-item">
-                        <a class="nav-link text-white" th:href="@{/usuarios/dashboard?seccion=usuarios}">Gestión de Usuarios</a>
-                    </li>
-                    <li th:if="${rol == 'Administrador'}" class="nav-item">
-                        <a class="nav-link text-white" th:href="@{/usuarios/dashboard?seccion=reportes}">Reportes</a>
-                    </li>
+                <span class="text-dark d-flex align-items-center" id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-1 me-4"></i>
+                </span>
+                <ul class="dropdown-menu dropdown-menu-end mt-2" aria-labelledby="userMenu">
+                    <li><a class="dropdown-item text-center" th:href="@{/usuarios/logout}">Cerrar sesión</a></li>
                 </ul>
-            </nav>
+            </div>
 
-            <main class="col-md-10 ms-sm-auto px-md-4 content">
-                <div th:switch="${seccion}">
-                    <th:block th:case="principal">
-                        <div th:replace="~{dashboardComponentes/principal::componente}"></div>
-                    </th:block>
-                    <th:block th:case="notas">
-                        <div th:replace="~{dashboardComponentes/notas::componente}"></div>
-                    </th:block>
-                    <th:block th:case="registrarMatricula">
-                        <div th:replace="~{dashboardComponentes/asistencia::componente}"></div>
-                    </th:block>
-                    <th:block th:case="registro-notas">
-                        <div th:replace="~{dashboardComponentes/registroNotas::componente}"></div>
-                    </th:block>
-                    <th:block th:case="usuarios">
-                        <div th:replace="~{dashboardComponentes/usuarios::componente}"></div>
-                    </th:block>
-                    <th:block th:case="reportes">
-                        <div th:replace="~{dashboardComponentes/reportes::componente}"></div>
-                    </th:block>
-                    <th:block th:case="*">
-                        <div class="alert alert-warning">Sección no encontrada</div>
-                    </th:block>
-                </div>
-
-
-            </main>
-        </div>
+            <div th:switch="${seccion}">
+                <th:block th:case="principal">
+                    <div th:replace="~{dashboardComponentes/principal::componente}"></div>
+                </th:block>
+                <th:block th:case="notas">
+                    <div th:replace="~{dashboardComponentes/notas::componente}"></div>
+                </th:block>
+                <th:block th:case="matricula">
+                    <div th:replace="~{dashboardComponentes/matricula::componente}"></div>
+                </th:block>
+                <th:block th:case="registro-notas">
+                    <div th:replace="~{dashboardComponentes/registroNotas::componente}"></div>
+                </th:block>
+                <th:block th:case="cursos">
+                    <div th:replace="~{dashboardComponentes/cursos::componente}"></div>
+                </th:block>
+                <th:block th:case="usuarios">
+                    <div th:replace="~{dashboardComponentes/usuarios::componente}"></div>
+                </th:block>
+                <th:block th:case="reportes">
+                    <div th:replace="~{dashboardComponentes/reportes::componente}"></div>
+                </th:block>
+                <th:block th:case="*">
+                    <div class="alert alert-warning">Sección no encontrada</div>
+                </th:block>
+            </div>
+        </main>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/matricula.js"></script>
 </body>
-
 </html>

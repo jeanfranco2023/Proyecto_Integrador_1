@@ -18,22 +18,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="">Matrículas</a>
-                        </li>
-                        <li class="nav-item" th:if="${rol == 'Alumno'}">
-                            <a class="nav-link" href="#notas">Notas</a>
-                        </li>
-                        <li class="nav-item" th:if="${rol == 'Administrador'}">
-                            <a class="nav-link" href="#">Estudiantes</a>
-                        </li>
-                        <li class="nav-item" th:if="${rol == 'Administrador'}">
-                            <a class="nav-link" href="#">Docentes</a>
-                        </li>
-                        <li class="nav-item" th:if="${rol != null}">
-                            <a class="nav-link text-warning" th:href="@{/usuarios/logout}">Cerrar Sesión</a>
-                        </li>
-                        <li class="nav-item" th:if="${rol == null}">
-                            <a class="nav-link text-warning" th:href="@{/usuarios/login}">Iniciar Sesión</a>
+                            <a class="nav-link" href="">Matricula</a>
+                        </li> 
+                        <li class="nav-item">
+                            <a class="nav-link text-black" th:href="@{/usuarios/login}">Iniciar Sesión</a>
                         </li>
                     </ul>
                 </div>

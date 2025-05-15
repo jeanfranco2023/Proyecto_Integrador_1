@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrícula</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+    <div th:fragment="componente" th:remove="tag">
+            <div class="container mt-4">
+        <!-- Mensajes Flash -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+        <h2 class="mb-4">Registro de Matrícula</h2>
+        
+        <form th:action="@{/matriculas/guardar}" method="POST" th:object="${matriculaDTO}">
+            <!-- Sección de datos del alumno -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Datos del Alumno</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="dniAlumno" class="form-label required-field">DNI</label>
+                            <input type="text" class="form-control" id="dniAlumno" 
+                                   th:field="*{alumno.dniAlumno}" pattern="[0-9]{8}" 
+                                   title="Ingrese 8 dígitos numéricos" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nombreAlumno" class="form-label required-field">Nombres</label>
+                            <input type="text" class="form-control" id="nombreAlumno" 
+                                   th:field="*{alumno.nombreAlumno}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="apellidoAlumno" class="form-label required-field">Apellidos</label>
+                            <input type="text" class="form-control" id="apellidoAlumno" 
+                                   th:field="*{alumno.apellidoAlumno}" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="fechaNacimiento" class="form-label required-field">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" id="fechaNacimiento" 
+                                   th:field="*{alumno.fechaNacimiento}" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="correoAlumno" class="form-label required-field">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correoAlumno" 
+                                   th:field="*{alumno.correoAlumno}" required>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="passwordAlumno" class="form-label required-field">Contraseña</label>
+                            <input type="password" class="form-control" id="passwordAlumno" 
+                                   th:field="*{alumno.passwordAlumno}" minlength="6" required>
+                        </div>
+                        
+                        <div class="col-12">
+                            <label for="nombreApoderado" class="form-label required-field">Nombre del Apoderado</label>
+                            <input type="text" class="form-control" id="nombreApoderado" 
+                                   th:field="*{alumno.nombreApoderado}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de datos de matrícula -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Datos de Matrícula</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="fechaMatricula" class="form-label required-field">Fecha de Matrícula</label>
+                            <input type="date" class="form-control" id="fechaMatricula" 
+                                   th:field="*{fechaMatricula}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="periodoAcademico" class="form-label required-field">Periodo Académico</label>
+                            <select class="form-select" id="periodoAcademico" th:field="*{periodoAcademico}" required>
+                                <option value="">Seleccione...</option>
+                                <option th:each="periodo : ${periodos}" 
+                                        th:value="${periodo}" 
+                                        th:text="${periodo}"></option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="grado" class="form-label required-field">Grado/Nivel</label>
+                            <select class="form-select" id="grado" th:field="*{grado}" required
+                                    onchange="cargarCursos(this.value)">
+                                <option value="">Seleccione...</option>
+                                <option th:each="grado : ${grados}" 
+                                        th:value="${grado}" 
+                                        th:text="${grado}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sección de cursos asignados -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Cursos Asignados</h5>
+                </div>
+                <div class="card-body">
+                    <div id="cursosContainer">
+                        <div class="alert alert-info">
+                            Seleccione un grado para ver los cursos correspondientes
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="submit" class="btn btn-primary">Registrar Matrícula</button>
+            </div>
+        </form>
+    </div>
+    </div>
+</body>
+</html>

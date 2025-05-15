@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.app.sistema.matricula.dto.Login;
+import com.app.sistema.matricula.dto.MatriculaDTO;
 import com.app.sistema.matricula.models.Administrador;
 import com.app.sistema.matricula.models.Alumnos;
 import com.app.sistema.matricula.models.Cursos;
 import com.app.sistema.matricula.models.Docentes;
+import com.app.sistema.matricula.repository.CursoRepository;
 import com.app.sistema.matricula.service.AdministradorService;
 import com.app.sistema.matricula.service.AlumnoService;
 import com.app.sistema.matricula.service.CursoService;
@@ -39,6 +41,9 @@ public class UsuarioController {
     @Autowired
     private CursoService cursoService;
 
+    @Autowired
+    private CursoRepository cursoRepository;
+
     private Alumnos alumnoIniciado;
 
     private Docentes docenteIniciado;
@@ -51,32 +56,37 @@ public class UsuarioController {
 
     @PostMapping("/logeo")
     public String logeo(Login login, Model model, HttpSession session) {
-        List<Alumnos> alumnos = alumnoService.buscarPorCorreo(login.getUsername());
-        if (!alumnos.isEmpty()) {
-            Alumnos alumno = alumnos.get(0);
-            if (alumno.getPasswordAlumno().equals(login.getPassword())) {
-                session.setAttribute("alumnoId", alumno.getIdAlumno());
-                session.setAttribute("nombreAlumno", alumno.getNombreAlumno());
-                return "redirect:/usuarios/dashboard?seccion=principal";
+        try {
+            List<Alumnos> alumnos = alumnoService.buscarPorCorreo(login.getUsername());
+            if (!alumnos.isEmpty()) {
+                Alumnos alumno = alumnos.get(0);
+                if (alumno.getPasswordAlumno().equals(login.getPassword())) {
+                    session.setAttribute("alumnoId", alumno.getIdAlumno());
+                    session.setAttribute("nombreAlumno", alumno.getNombreAlumno());
+                    return "redirect:/usuarios/dashboard?seccion=principal";
+                }
             }
-        }
-        List<Docentes> docentes = docenteService.buscarPorCorreo(login.getUsername());
-        if (!docentes.isEmpty()) {
-            Docentes docente = docentes.get(0);
-            if (docente.getPasswordDocente().equals(login.getPassword())) {
-                session.setAttribute("docenteId", docente.getIdDocente());
-                session.setAttribute("nombreDocente", docente.getNombreDocente());
-                return "redirect:/usuarios/dashboard?seccion=principal";
+            List<Docentes> docentes = docenteService.buscarPorCorreo(login.getUsername());
+            if (!docentes.isEmpty()) {
+                Docentes docente = docentes.get(0);
+                if (docente.getPasswordDocente().equals(login.getPassword())) {
+                    session.setAttribute("docenteId", docente.getIdDocente());
+                    session.setAttribute("nombreDocente", docente.getNombreDocente());
+                    return "redirect:/usuarios/dashboard?seccion=principal";
+                }
             }
-        }
-        List<Administrador> admin = administradorService.buscarPorCorreo(login.getUsername());
-        if (!admin.isEmpty()) {
-            Administrador administrador = admin.get(0);
-            if (administrador.getPasswordAdministrador().equals(login.getPassword())) {
-                session.setAttribute("adminIniciado", administrador.getNombreAdministrador());
-
-                return "redirect:/usuarios/dashboard?seccion=principal";
+            List<Administrador> admin = administradorService.buscarPorCorreo(login.getUsername());
+            if (!admin.isEmpty()) {
+                Administrador administrador = admin.get(0);
+                if (administrador.getPasswordAdministrador().equals(login.getPassword())) {
+                    session.setAttribute("adminIniciado", administrador.getNombreAdministrador());
+                    return "redirect:/usuarios/dashboard?seccion=principal";
+                }
             }
+        } catch (Exception e) {
+            model.addAttribute("error", "Ocurrió un error al intentar iniciar sesión: " + e.getMessage());
+            return "login";
+        } finally {
         }
         model.addAttribute("error", "Usuario o contraseña incorrectos");
         return "login";
@@ -85,7 +95,7 @@ public class UsuarioController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
-        return "redirect:/usuarios/principal";
+        return "redirect:/usuarios/login";
     }
 
     @GetMapping("/principal")
@@ -95,10 +105,12 @@ public class UsuarioController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, HttpSession session, @RequestParam String seccion,
-    @ModelAttribute("rol") String rol) {
-
+            @ModelAttribute("rol") String rol) {
         model.addAttribute("seccion", seccion);
-
+        model.addAttribute("curso", new Cursos());
+        model.addAttribute("matriculaDTO", new MatriculaDTO());
+        model.addAttribute("grados", cursoRepository.findDistinctGradoCurso());
+        model.addAttribute("periodos", List.of("2025-I", "2025-II"));
         switch (rol) {
             case "Alumno":
                 Object alumnoAttr = session.getAttribute("alumnoId");
@@ -108,7 +120,6 @@ public class UsuarioController {
                     model.addAttribute("cursos", cursos);
                 }
                 break;
-
             case "Docente":
                 Object docenteAttr = session.getAttribute("docenteId");
                 if (docenteAttr instanceof Integer) {
@@ -125,11 +136,8 @@ public class UsuarioController {
                 break;
 
             default:
-                // Manejar caso en que el rol no sea válido o no esté en la sesión
                 break;
         }
-        System.out.print("Seccion capturada");
-        System.out.print("Sección: " + seccion);
         return "dashboard";
     }
 
@@ -147,12 +155,14 @@ public class UsuarioController {
 
     @ModelAttribute("usuarioIniciado")
     public Object usuarioIniciado(HttpSession session) {
-        if (session.getAttribute("alumnoIniciado") != null) {
-            return (Alumnos) session.getAttribute("alumnoIniciado");
-        } else if (session.getAttribute("docenteIniciado") != null) {
-            return (Docentes) session.getAttribute("docenteIniciado");
+        if (session.getAttribute("alumnoId") != null) {
+            return session.getAttribute("nombreAlumno");
+
+        } else if (session.getAttribute("docenteId") != null) {
+            return session.getAttribute("nombreDocente");
+
         } else if (session.getAttribute("adminIniciado") != null) {
-            return (Administrador) session.getAttribute("adminIniciado");
+            return session.getAttribute("adminIniciado");
         }
         return "";
     }

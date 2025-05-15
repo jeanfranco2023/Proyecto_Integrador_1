@@ -2,7 +2,7 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <body>
   <div th:fragment="componente" th:remove="tag">
-    <h2 class="mb-4 ms-4 mt-5 fs-1 fw-bold text-ceter">Bienvenido al sistema escolar</h2>
+    <h2 class="mb-4 mt-3 fs-1 fw-bold text-center">Bienvenido al sistema escolar</h2>
     <div th:if="${rol == 'Alumno' or rol == 'Docente'}">
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="curso : ${cursos}">

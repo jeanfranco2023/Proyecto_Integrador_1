@@ -31,7 +31,7 @@ public class AlumnoService implements IService<Alumnos> {
 
     @Override
     public void insertar(Alumnos alumno) {
-        alumnoRepository.save(alumno);
+       alumnoRepository.save(alumno);
     }
 
     @Override
@@ -49,6 +49,10 @@ public class AlumnoService implements IService<Alumnos> {
 
     public Object contarAlumnos() {
         return alumnoRepository.count();
+    }
+
+    public boolean existePorDni(String dni) {
+        return alumnoRepository.existsByDniAlumno(dni);
     }
 
     public List<Cursos> obtenerCursosPorId(Integer id) {
