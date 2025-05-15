@@ -6,14 +6,12 @@
     <div th:if="${rol == 'Alumno' or rol == 'Docente'}">
       <div class="row row-cols-1 row-cols-md-3 g-4">
         <div class="col" th:each="curso : ${cursos}">
-          <a th:href="@{/cursos/{id}(id=${curso.id})}" class="text-decoration-none text-dark">
+          <a th:href="@{/cursos/{id}(id=${idCurso})}" class="text-decoration-none text-dark">
             <div class="card h-100 shadow-sm">
               <div class="card-body">
-                <h5 class="card-title" th:text="${curso.nombre}">Curso</h5>
-                <p class="card-text" th:text="${curso.descripcion}">Descripción del curso</p>
+                <h5 class="card-title" th:text="${curso.nombreCurso}">Curso</h5>
               </div>
               <div class="card-footer text-muted">
-                <span th:text="${curso.profesor}">Nombre del profesor</span>
               </div>
             </div>
           </a>
