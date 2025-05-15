@@ -41,6 +41,7 @@ public class Matricula {
     @ToString.Exclude
     @OneToMany(mappedBy = "matricula", cascade = CascadeType.ALL)
     private List<Nota> notas;
+    
     @ManyToOne
     @JoinColumn(name = "administrador_id")
     private Administrador administrador;

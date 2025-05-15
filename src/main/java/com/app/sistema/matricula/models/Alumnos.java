@@ -40,6 +40,4 @@ public class Alumnos {
 
     private String rol;
     private LocalDate fechaNacimiento;
-
-
 }

@@ -24,6 +24,8 @@ import com.app.sistema.matricula.repository.MatriculaRepository;
 import com.app.sistema.matricula.service.AlumnoService;
 import com.app.sistema.matricula.service.DetalleMatriculaService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/matriculas")
 public class MatriculaController {
@@ -45,7 +47,7 @@ public class MatriculaController {
         model.addAttribute("matriculaDTO", new MatriculaDTO());
         model.addAttribute("grados", cursoRepository.findDistinctGradoCurso());
         model.addAttribute("periodos", List.of("2025-I", "2025-II"));
-        model.addAttribute("fechaHoy", LocalDate.now()); // Para fecha predeterminada
+        model.addAttribute("fechaHoy", LocalDate.now()); 
         return "matricula";
     }
 
@@ -57,15 +59,13 @@ public class MatriculaController {
 
     @PostMapping("/guardar")
     public String guardarMatricula(@ModelAttribute MatriculaDTO dto,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, HttpSession session) {
 
-        // Validación mejorada del DNI
         if (dto.getAlumno().getDniAlumno() == null || dto.getAlumno().getDniAlumno().trim().isEmpty()) {
             redirectAttributes.addFlashAttribute("error", "El DNI es requerido");
             return "redirect:/matriculas/nueva";
         }
 
-        // Validación de formato de DNI (8 dígitos)
         if (!dto.getAlumno().getDniAlumno().matches("\\d{8}")) {
             redirectAttributes.addFlashAttribute("error", "DNI debe tener 8 dígitos");
             return "redirect:/matriculas/nueva";
@@ -78,27 +78,22 @@ public class MatriculaController {
         }
 
         try {
-            // Asignar rol (consistente con mayúsculas)
             dto.getAlumno().setRol("Alumno");
 
-            // Guardar alumno
             alumnoService.insertar(dto.getAlumno());
 
-            // Obtener alumno - versión más segura
             Alumnos alumnoGuardado = alumnoService.buscarPorId(dto.getAlumno().getIdAlumno());
             if (alumnoGuardado == null) {
                 redirectAttributes.addFlashAttribute("error", "Error al recuperar datos del alumno");
                 return "redirect:/matriculas/nueva";
             }
 
-            // Crear y guardar matrícula
             Matricula matricula = new Matricula();
             matricula.setAlumno(alumnoGuardado);
             matricula.setFechaMatricula(dto.getFechaMatricula());
             matricula.setPeriodoAcademico(dto.getPeriodoAcademico());
             Matricula matriculaGuardada = matriculaRepository.save(matricula);
 
-            // Validar si hay cursos para el grado
             List<Cursos> cursos = cursoRepository.findByGradoCurso(dto.getGrado());
             if (cursos.isEmpty()) {
                 redirectAttributes.addFlashAttribute("warning", "Se registró la matrícula pero no se asignaron cursos");
@@ -114,7 +109,11 @@ public class MatriculaController {
             redirectAttributes.addFlashAttribute("success",
                     "Matrícula registrada exitosamente para " + alumnoGuardado.getNombreAlumno() + " "
                             + alumnoGuardado.getApellidoAlumno());
-            return "redirect:/matriculas/exito";
+            if (session.getAttribute("alumnoId") != null || session.getAttribute("docenteId") != null 
+                    || session.getAttribute("adminIniciado") != null) {
+                return "redirect:/usuarios/dashboard?seccion=matricula";
+            }
+            return "redirect:/usuarios/matricula";
 
         } catch (Exception e) {
             e.printStackTrace();
