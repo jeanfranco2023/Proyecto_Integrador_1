@@ -79,7 +79,7 @@
                     </a>
                 </li>
                 <li th:if="${rol == 'Administrador'}" class="nav-item">
-                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=reportes}">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=docentes}">
                         <i class="bi bi-person-badge"></i> Docentes
                     </a>
                 </li>
@@ -131,6 +131,15 @@
                 </th:block>
                 <th:block th:case="cursos">
                     <div th:replace="~{dashboardComponentes/cursos::componente}"></div>
+                </th:block>
+                <th:block th:case="docentes">
+                    <div th:replace="~{dashboardComponentes/principalDocentes::componente}"></div>
+                </th:block>
+                <th:block th:case="registro-docentes">
+                    <div th:replace="~{dashboardComponentes/registroDocentes::componente}"></div>
+                </th:block>
+                <th:block th:case="lista-docentes">
+                    <div th:replace="~{dashboardComponentes/tablaDocentes::componente}"></div>
                 </th:block>
                 <th:block th:case="usuarios">
                     <div th:replace="~{dashboardComponentes/usuarios::componente}"></div>

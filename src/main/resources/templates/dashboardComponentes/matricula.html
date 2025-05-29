@@ -1,14 +1,8 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrícula</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
-</head>
 <body>
     <div th:fragment="componente" th:remove="tag">
-            <div class="container mt-4">
+    <div class="container mt-4">
         <!-- Mensajes Flash -->
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>

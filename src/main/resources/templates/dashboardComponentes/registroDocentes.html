@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<body>
+    <div th:fragment="componente" th:remove="tag">
+        <div class="container mt-4 w-50 pt-3 pb-3 pe-3 ps-3 shadow">
+            <h2 class="mb-4 fs-1 fw-bold">Registro de Docentes</h2>
+            <form th:action="@{/docentes/guardarDocente}" method="POST" th:object="${docentes}" class="row g-3">
+                <div class="col-12">
+                    <label for="nombreDocente" class="form-label">
+                        <i class="bi bi-person"></i> Nombre:
+                    </label>
+                    <input type="text" id="nombreDocente" th:field="*{nombreDocente}" class="form-control" required>
+                </div>
+                <div class="col-12">
+                    <label for="apellidoDocente" class="form-label">
+                        <i class="bi bi-person-badge"></i> Apellido:
+                    </label>
+                    <input type="text" id="apellidoDocente" th:field="*{apellidoDocente}" class="form-control" required>
+                </div>
+                <div class="col-12">
+                    <label for="dniDocente" class="form-label">
+                        <i class="bi bi-credit-card"></i> DNI:
+                    </label>
+                    <input type="text" id="dniDocente" th:field="*{dniDocente}" class="form-control" required>
+                </div>
+                <div class="col-12">
+                    <label for="telefonoDocente" class="form-label">
+                        <i class="bi bi-telephone"></i> Teléfono:
+                    </label>
+                    <input type="tel" id="telefonoDocente" th:field="*{telefonoDocente}" class="form-control">
+                </div>
+                <div class="col-12">
+                    <label for="especialidadDocente" class="form-label">
+                        <i class="bi bi-award"></i> Especialidad:
+                    </label>
+                    <input type="text" id="especialidadDocente" th:field="*{especialidadDocente}" class="form-control">
+                </div>
+                <div class="col-12">
+                    <label for="correoDocente" class="form-label">
+                        <i class="bi bi-envelope"></i> Correo Electrónico:
+                    </label>
+                    <input type="email" id="correoDocente" th:field="*{correoDocente}" class="form-control" required>
+                </div>
+                <div class="col-12">
+                    <label for="passwordDocente" class="form-label">
+                        <i class="bi bi-lock"></i> Contraseña:
+                    </label>
+                    <input type="password" id="passwordDocente" th:field="*{passwordDocente}" class="form-control" required>
+                </div>
+                <div class="col-12 d-flex justify-content-between">
+                    <a th:href="@{/usuarios/dashboard?seccion=docentes}" class="btn btn-secondary px-4 py-2 shadow-sm">
+                        <i class="bi bi-arrow-left me-2"></i>Regresar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-person-plus me-2"></i>Registrar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

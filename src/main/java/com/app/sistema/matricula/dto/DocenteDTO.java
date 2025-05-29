@@ -16,4 +16,5 @@ public class DocenteDTO {
     private String passwordDocente;
     private String rol;
     private String especialidadDocente;
+    private String telefonoDocente;
 }

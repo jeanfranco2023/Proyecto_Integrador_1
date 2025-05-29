@@ -32,13 +32,10 @@ public class MatriculaController {
 
     @Autowired
     private AlumnoService alumnoService;
-
     @Autowired
     private MatriculaRepository matriculaRepository;
-
     @Autowired
     private CursoRepository cursoRepository;
-
     @Autowired
     private DetalleMatriculaService detalleMatriculaService;
 

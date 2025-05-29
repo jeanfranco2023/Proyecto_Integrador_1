@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.app.sistema.matricula.dto.DocenteDTO;
 import com.app.sistema.matricula.dto.Login;
 import com.app.sistema.matricula.dto.MatriculaDTO;
 import com.app.sistema.matricula.models.Administrador;
@@ -28,26 +29,16 @@ import jakarta.servlet.http.HttpSession;
 @Controller
 @RequestMapping("/usuarios")
 public class UsuarioController {
-
     @Autowired
     private AlumnoService alumnoService;
-
     @Autowired
     private DocenteService docenteService;
-
     @Autowired
     private AdministradorService administradorService;
-
     @Autowired
     private CursoService cursoService;
-
     @Autowired
     private CursoRepository cursoRepository;
-
-    private Alumnos alumnoIniciado;
-
-    private Docentes docenteIniciado;
-
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("login", new Login());
@@ -109,6 +100,8 @@ public class UsuarioController {
         model.addAttribute("seccion", seccion);
         model.addAttribute("curso", new Cursos());
         model.addAttribute("matriculaDTO", new MatriculaDTO());
+        model.addAttribute("docente", docenteService.listar());
+        model.addAttribute("docentes", new DocenteDTO());
         model.addAttribute("grados", cursoRepository.findDistinctGradoCurso());
         model.addAttribute("periodos", List.of("2025-I", "2025-II"));
         switch (rol) {
