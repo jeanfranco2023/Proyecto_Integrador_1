@@ -30,13 +30,14 @@
                         <td th:text="${docente.especialidadDocente}"></td>
                         <td th:text="${docente.correoDocente}"></td>
                         <td>
-                            <!-- Aquí puedes agregar botones para editar o eliminar -->
-                            <a th:href="@{/docentes/editar/{id}(id=${docente.idDocente})}" class="btn btn-warning btn-sm">
-                                Editar
-                            </a>
-                            <a th:href="@{/docentes/eliminar/{id}(id=${docente.idDocente})}" class="btn btn-danger btn-sm">
-                                Eliminar
-                            </a>
+                            <div class="d-flex gap-2">
+                                <a th:href="@{/docentes/editar/{id}(id=${docente.idDocente})}" class="btn btn-warning btn-sm">
+                                    Editar
+                                </a>
+                                <form th:action="@{/docentes/eliminarDocente/{id}(id=${docente.idDocente})}" method="POST" class="m-0 p-0">
+                                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 </tbody>

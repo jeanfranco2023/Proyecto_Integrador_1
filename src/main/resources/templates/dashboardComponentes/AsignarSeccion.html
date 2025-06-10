@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Asignar Sección</title>
+</head>
+<body>
+   <div th:fragment="componente" class="container mt-5">
+    <h1 class="mb-4">Asignar Sección y Curso a Docente</h1>
+    <form th:action="@{/docentes/asignarCursoSeccion}" th:object="${detalleCursoSeccion}" method="post" class="row shadow">
+        <!-- Campos de curso y año -->
+        <div class="row justify-content-center g-4">
+            <div class="col-md-4">
+                <label class="form-label">Nombre del Curso:</label>
+                <select th:field="*{nombreCurso}" class="form-select">
+                    <option value="">Seleccione curso</option>
+                    <option th:each="curso : ${listaCursos}" 
+                            th:value="${curso}" 
+                            th:text="${curso}"></option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Año:</label>
+                <input type="number" th:field="*{anio}" class="form-control" />
+            </div>
+        </div>
+        <div class="row justify-content-center g-4 mt-2">
+            <div class="col-md-4">
+                <label class="form-label">Docente:</label>
+                <select th:field="*{docente.idDocente}" class="form-select">
+                    <option value="">Seleccione docente</option>
+                    <option th:each="docente : ${docente}" 
+                            th:value="${docente.idDocente}" 
+                            th:text="${docente.nombreDocente}"></option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Sección:</label>
+                <select th:field="*{seccion.idSeccion}" class="form-select">
+                    <option value="">Seleccione sección</option>
+                    <option th:each="seccion : ${secciones}" 
+                            th:value="${seccion.idSeccion}" 
+                            th:text="${seccion.gradoSeccion + ' ' + seccion.nombreSeccion + ' - ' + seccion.turnoSeccion}"></option>
+                </select>
+            </div>
+        </div>
+
+        <div class="col-12 d-flex justify-content-center mt-5 mb-5">
+            <a th:href="@{/usuarios/dashboard?seccion=docentes}" class="btn btn-secondary px-4 py-2 shadow-sm me-5">
+                <i class="bi bi-arrow-left me-2"></i>Regresar
+            </a>
+                <form th:action="@{/docentes/asignarCursoSeccion}" method="POST" class="m-0 p-0">
+                    <button type="submit" class="btn btn-primary px-4 py-2 shadow-sm me-5">Guardar</button>
+                </form>       
+         </div>
+    </form>
+</div>
+</body>
+</html>

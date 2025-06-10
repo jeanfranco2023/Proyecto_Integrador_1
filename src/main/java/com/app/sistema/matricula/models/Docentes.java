@@ -2,6 +2,7 @@ package com.app.sistema.matricula.models;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +18,7 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
+@ToString(exclude = "detalles")
 @Table(name = "docentes")
 public class Docentes {
     @Id
@@ -31,7 +32,7 @@ public class Docentes {
     private String passwordDocente;
     private String telefonoDocente;
     private String especialidadDocente;
-    @OneToMany(mappedBy = "docente")
+    @OneToMany(mappedBy = "docente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetalleCursoSeccion> detalles;
     private String rol;
 }

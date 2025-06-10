@@ -17,12 +17,14 @@ import com.app.sistema.matricula.dto.MatriculaDTO;
 import com.app.sistema.matricula.models.Administrador;
 import com.app.sistema.matricula.models.Alumnos;
 import com.app.sistema.matricula.models.Cursos;
+import com.app.sistema.matricula.models.DetalleCursoSeccion;
 import com.app.sistema.matricula.models.Docentes;
 import com.app.sistema.matricula.repository.CursoRepository;
 import com.app.sistema.matricula.service.AdministradorService;
 import com.app.sistema.matricula.service.AlumnoService;
 import com.app.sistema.matricula.service.CursoService;
 import com.app.sistema.matricula.service.DocenteService;
+import com.app.sistema.matricula.service.SeccionService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -39,6 +41,9 @@ public class UsuarioController {
     private CursoService cursoService;
     @Autowired
     private CursoRepository cursoRepository;
+    @Autowired
+    private SeccionService seccionService;
+
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("login", new Login());
@@ -102,7 +107,10 @@ public class UsuarioController {
         model.addAttribute("matriculaDTO", new MatriculaDTO());
         model.addAttribute("docente", docenteService.listar());
         model.addAttribute("docentes", new DocenteDTO());
+        model.addAttribute("detalleCursoSeccion", new DetalleCursoSeccion());
         model.addAttribute("grados", cursoRepository.findDistinctGradoCurso());
+        model.addAttribute("listaCursos", cursoRepository.findDistinctNombreCurso());
+        model.addAttribute("secciones", seccionService.listar());
         model.addAttribute("periodos", List.of("2025-I", "2025-II"));
         switch (rol) {
             case "Alumno":

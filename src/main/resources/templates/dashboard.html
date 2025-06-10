@@ -141,6 +141,9 @@
                 <th:block th:case="lista-docentes">
                     <div th:replace="~{dashboardComponentes/tablaDocentes::componente}"></div>
                 </th:block>
+                <th:block th:case="asignar-seccion">
+                    <div th:replace="~{dashboardComponentes/AsignarSeccion::componente}"></div>
+                </th:block>
                 <th:block th:case="usuarios">
                     <div th:replace="~{dashboardComponentes/usuarios::componente}"></div>
                 </th:block>
