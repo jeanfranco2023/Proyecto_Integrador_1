@@ -1,6 +1,7 @@
 package com.app.sistema.matricula.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,11 +20,13 @@ import com.app.sistema.matricula.models.Alumnos;
 import com.app.sistema.matricula.models.Cursos;
 import com.app.sistema.matricula.models.DetalleCursoSeccion;
 import com.app.sistema.matricula.models.Docentes;
+import com.app.sistema.matricula.models.Matricula;
 import com.app.sistema.matricula.repository.CursoRepository;
 import com.app.sistema.matricula.service.AdministradorService;
 import com.app.sistema.matricula.service.AlumnoService;
 import com.app.sistema.matricula.service.CursoService;
 import com.app.sistema.matricula.service.DocenteService;
+import com.app.sistema.matricula.service.MatriculaService;
 import com.app.sistema.matricula.service.SeccionService;
 
 import jakarta.servlet.http.HttpSession;
@@ -43,6 +46,8 @@ public class UsuarioController {
     private CursoRepository cursoRepository;
     @Autowired
     private SeccionService seccionService;
+    @Autowired
+    private MatriculaService matriculaService;
 
     @GetMapping("/login")
     public String login(Model model) {
@@ -100,45 +105,74 @@ public class UsuarioController {
     }
 
     @GetMapping("/dashboard")
-    public String dashboard(Model model, HttpSession session, @RequestParam String seccion,
+    public String dashboard(Model model, HttpSession session,
+            @RequestParam String seccion,
+            @RequestParam(required = false) Integer id,
+            @RequestParam(required = false) String modo,
             @ModelAttribute("rol") String rol) {
-        model.addAttribute("seccion", seccion);
-        model.addAttribute("curso", new Cursos());
-        model.addAttribute("matriculaDTO", new MatriculaDTO());
-        model.addAttribute("docente", docenteService.listar());
-        model.addAttribute("docentes", new DocenteDTO());
-        model.addAttribute("detalleCursoSeccion", new DetalleCursoSeccion());
+
         model.addAttribute("grados", cursoRepository.findDistinctGradoCurso());
+        model.addAttribute("periodos", List.of("2025-I", "2025-II"));
+        model.addAttribute("seccion", seccion);
+
+        if ("matricula".equals(seccion)) {
+            MatriculaDTO dto = new MatriculaDTO();
+
+            if ("editar".equalsIgnoreCase(modo)) {
+                if (id != null) {
+                    Alumnos alumno = alumnoService.buscarPorId(id);
+                    Optional<Integer> idMatricula = alumno.getMatriculas().stream()
+                            .map(Matricula::getIdMatricula)
+                            .findFirst();
+                    if (idMatricula.isPresent()) {
+                        Matricula matricula = matriculaService.buscarPorId(idMatricula.get());
+                        if (matricula != null) {
+                            dto.setIdMatricula(matricula.getIdMatricula());
+                            dto.setAlumno(matricula.getAlumno());
+                            dto.setFechaMatricula(matricula.getFechaMatricula());
+                            dto.setPeriodoAcademico(matricula.getPeriodoAcademico());
+                        }
+                    }
+                } else {
+                    model.addAttribute("error", "No se proporcionó un ID válido para editar la matrícula.");
+                }
+            }
+
+            model.addAttribute("matriculaDTO", dto);
+            return "dashboard";
+        }
+
+        model.addAttribute("matriculaDTO", new MatriculaDTO());
+        model.addAttribute("curso", new Cursos());
+        model.addAttribute("docentes", new DocenteDTO());
+        model.addAttribute("docente", docenteService.listar());
+        model.addAttribute("alumnos", alumnoService.listar());
+        model.addAttribute("detalleCursoSeccion", new DetalleCursoSeccion());
         model.addAttribute("listaCursos", cursoRepository.findDistinctNombreCurso());
         model.addAttribute("secciones", seccionService.listar());
-        model.addAttribute("periodos", List.of("2025-I", "2025-II"));
+
         switch (rol) {
-            case "Alumno":
+            case "Alumno" -> {
                 Object alumnoAttr = session.getAttribute("alumnoId");
-                if (alumnoAttr instanceof Integer) {
-                    Integer alumnoId = (Integer) alumnoAttr;
+                if (alumnoAttr instanceof Integer alumnoId) {
                     List<Cursos> cursos = alumnoService.obtenerCursosPorId(alumnoId);
                     model.addAttribute("cursos", cursos);
                 }
-                break;
-            case "Docente":
+            }
+            case "Docente" -> {
                 Object docenteAttr = session.getAttribute("docenteId");
-                if (docenteAttr instanceof Integer) {
-                    Integer docenteId = (Integer) docenteAttr;
+                if (docenteAttr instanceof Integer docenteId) {
                     List<Cursos> cursos = docenteService.obtenerCursosPorId(docenteId);
                     model.addAttribute("cursos", cursos);
                 }
-                break;
-
-            case "Administrador":
+            }
+            case "Administrador" -> {
                 model.addAttribute("totalAlumnos", alumnoService.contarAlumnos());
                 model.addAttribute("totalDocentes", docenteService.contarDocentes());
                 model.addAttribute("totalCursos", cursoService.contarCursos());
-                break;
-
-            default:
-                break;
+            }
         }
+
         return "dashboard";
     }
 

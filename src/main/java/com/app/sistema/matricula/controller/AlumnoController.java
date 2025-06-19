@@ -10,13 +10,15 @@ import com.app.sistema.matricula.dto.AlumnoDTO;
 import com.app.sistema.matricula.models.Alumnos;
 import com.app.sistema.matricula.service.AlumnoService;
 
+import jakarta.servlet.http.HttpSession;
+
 @Controller
 @RequestMapping("/alumnos")
 public class AlumnoController {
 
     @Autowired
     private AlumnoService alumnoService;
-  
+
     @GetMapping("/registroAlumno")
     public String mostrarFormularioRegistro(Model model) {
         model.addAttribute("alumno", new AlumnoDTO());
@@ -37,11 +39,11 @@ public class AlumnoController {
         alumno.setNombreApoderado(alumnoDTO.getNombreApoderado());
         alumno.setFechaNacimiento(alumnoDTO.getFechaNacimiento());
         alumnoService.insertar(alumno);
-        
+
         return "redirect:/alumnos/registroAlumno";
     }
 
-    @GetMapping("/editar/alumno/{id}")
+    @GetMapping("/editar/{id}")
     public String mostrarFormularioEdicion(@PathVariable("id") Integer id, ModelMap model) {
         Alumnos alumno = alumnoService.buscarPorId(id);
         if (alumno != null) {
@@ -57,7 +59,7 @@ public class AlumnoController {
             model.addAttribute("usuario", alumnoDTO);
             return "editarAlumno";
         }
-        return "redirect:/alumnos/registro";
+        return "redirect:/usuarios/dashboard?seccion=principal";
     }
 
     @PostMapping("/actualizar")
@@ -73,7 +75,30 @@ public class AlumnoController {
         alumno.setNombreApoderado(alumnoDTO.getNombreApoderado());
         alumno.setFechaNacimiento(alumnoDTO.getFechaNacimiento());
         alumnoService.insertar(alumno);
-        
+
         return "redirect:/alumnos/registro";
     }
+
+    @PostMapping("/eliminar/{id}")
+    public String eliminarAlumno(@PathVariable("id") Integer id) {
+        Alumnos alumno = alumnoService.buscarPorId(id);
+        if (alumno != null) {
+            alumnoService.eliminar(alumno);
+            return "redirect:/usuarios/dashboard?seccion=lista-alumnos";
+        }
+        return "redirect:/alumnos/registroAlumno?error=Alumno no encontrado";
+    }
+
+    @ModelAttribute("rol")
+    public String rol(HttpSession session) {
+        if (session.getAttribute("alumnoId") != null) {
+            return "Alumno";
+        } else if (session.getAttribute("docenteId") != null) {
+            return "Docente";
+        } else if (session.getAttribute("adminIniciado") != null) {
+            return "Administrador";
+        }
+        return null;
+    }
 }
+

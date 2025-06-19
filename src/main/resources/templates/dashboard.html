@@ -74,18 +74,13 @@
                     </a>
                 </li>
                 <li th:if="${rol == 'Administrador'}" class="nav-item">
-                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=reportes}">
+                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=alumno}">
                         <i class="bi bi-people"></i> Estudiantes
                     </a>
                 </li>
                 <li th:if="${rol == 'Administrador'}" class="nav-item">
                     <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=docentes}">
                         <i class="bi bi-person-badge"></i> Docentes
-                    </a>
-                </li>
-                <li th:if="${rol == 'Administrador'}" class="nav-item">
-                    <a class="nav-link fs-5" th:href="@{/usuarios/dashboard?seccion=matricula}">
-                        <i class="bi bi-journal-plus"></i> Matrícula
                     </a>
                 </li>
                 <li th:if="${rol == 'Administrador'}" class="nav-item">
@@ -140,6 +135,12 @@
                 </th:block>
                 <th:block th:case="lista-docentes">
                     <div th:replace="~{dashboardComponentes/tablaDocentes::componente}"></div>
+                </th:block>
+                <th:block th:case="alumno">
+                    <div th:replace="~{dashboardComponentes/principalAlumnos::componente}"></div>
+                </th:block>
+                <th:block th:case="lista-alumnos">
+                    <div th:replace="~{dashboardComponentes/tablaEstudiantes::componente}"></div>
                 </th:block>
                 <th:block th:case="asignar-seccion">
                     <div th:replace="~{dashboardComponentes/AsignarSeccion::componente}"></div>

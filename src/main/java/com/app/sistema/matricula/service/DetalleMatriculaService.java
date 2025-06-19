@@ -33,4 +33,8 @@ public class DetalleMatriculaService implements IService<DetalleMatricula> {
         detalleMatriculaRepository.delete(objeto);
     }
 
+    public void eliminarPorMatricula(Integer idMatricula) {
+        detalleMatriculaRepository.deleteByMatriculaId(idMatricula);
+    }
+
 }

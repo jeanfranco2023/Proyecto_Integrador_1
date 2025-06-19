@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MatriculaDTO {
+    private Integer idMatricula;
     private Alumnos alumno = new Alumnos();
     private LocalDate fechaMatricula;
     private String periodoAcademico;
