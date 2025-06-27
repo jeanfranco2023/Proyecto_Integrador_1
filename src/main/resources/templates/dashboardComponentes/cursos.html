@@ -28,20 +28,7 @@
                                     <label for="gradoCurso" class="form-label required-field">Grado/Nivel</label>
                                     <select class="form-select" id="gradoCurso" th:field="*{gradoCurso}" required>
                                         <option value="">Seleccione un grado...</option>
-                                        <option value="Inicial 3 años">Inicial 3 años</option>
-                                        <option value="Inicial 4 años">Inicial 4 años</option>
-                                        <option value="Inicial 5 años">Inicial 5 años</option>
-                                        <option value="Primer Grado">Primer Grado</option>
-                                        <option value="Segundo Grado">Segundo Grado</option>
-                                        <option value="Tercer Grado">Tercer Grado</option>
-                                        <option value="Cuarto Grado">Cuarto Grado</option>
-                                        <option value="Quinto Grado">Quinto Grado</option>
-                                        <option value="Sexto Grado">Sexto Grado</option>
-                                        <option value="Primer Año Secundaria">Primer Año Secundaria</option>
-                                        <option value="Segundo Año Secundaria">Segundo Año Secundaria</option>
-                                        <option value="Tercer Año Secundaria">Tercer Año Secundaria</option>
-                                        <option value="Cuarto Año Secundaria">Cuarto Año Secundaria</option>
-                                        <option value="Quinto Año Secundaria">Quinto Año Secundaria</option>
+                                        <option th:each="grado : ${grados}" th:value="${grado}" th:text="${grado}"></option>
                                     </select>
                                 </div>
 

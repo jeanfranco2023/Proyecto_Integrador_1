@@ -1,0 +1,86 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="FichaMatriculaFormal" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b8f9c8e4-1ea4-4a8e-bd2e-abc123456789">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="nombresEstudiante" class="java.lang.String"/>
+	<parameter name="apellidosEstudiante" class="java.lang.String"/>
+	<parameter name="seccionEstudiante" class="java.lang.String"/>
+	<parameter name="logoInsignia" class="java.lang.String"/>
+	<field name="nombreCurso" class="java.lang.String"/>
+	<field name="nota1" class="java.lang.Integer"/>
+	<field name="nota2" class="java.lang.Integer"/>
+	<field name="nota3" class="java.lang.Integer"/>
+	<field name="nota4" class="java.lang.Integer"/>
+	<field name="promedio" class="java.math.BigDecimal"/>
+	<background/>
+	<title height="180">
+		<element kind="staticText" uuid="3c6523fb-a175-46e7-901e-539a84c6a380" x="80" y="10" width="400" height="30" fontSize="18.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[INSTITUCIÓN EDUCATIVA VICTOR RAÚL HAYA DE LA TORRE]]></text>
+		</element>
+		<element kind="staticText" uuid="08858970-be75-4c24-81cb-bb9d96c1328f" x="80" y="45" width="400" height="25" fontSize="14.0" bold="true" hTextAlign="Center">
+			<text><![CDATA[FICHA DE MATRÍCULA Y REPORTE DE NOTAS]]></text>
+		</element>
+		<element kind="rectangle" uuid="9f878f50-2fe2-4657-ac5b-7d094db071e9" x="0" y="85" width="555" height="85"/>
+		<element kind="staticText" uuid="4de33a11-ca0d-4dd2-b6c7-06475295b9a4" x="10" y="90" width="130" height="20">
+			<text><![CDATA[Nombres:]]></text>
+		</element>
+		<element kind="textField" uuid="25fa1aa1-0e5e-4237-873b-690ed90093e0" x="150" y="90" width="350" height="20">
+			<expression><![CDATA[$P{nombresEstudiante}]]></expression>
+		</element>
+		<element kind="staticText" uuid="fe633c3b-8c05-4610-b96b-8f0d4168fc0a" x="10" y="115" width="130" height="20">
+			<text><![CDATA[Apellidos:]]></text>
+		</element>
+		<element kind="textField" uuid="c3cfdf54-5014-420a-8c3a-d0a6e6548c1b" x="150" y="115" width="350" height="20">
+			<expression><![CDATA[$P{apellidosEstudiante}]]></expression>
+		</element>
+		<element kind="staticText" uuid="3210c62d-866e-4414-b9ca-ce1ed1044587" x="10" y="140" width="130" height="20">
+			<text><![CDATA[Sección:]]></text>
+		</element>
+		<element kind="textField" uuid="2576e380-b183-4ba8-bbbb-e1708a9730f2" x="150" y="140" width="350" height="20">
+			<expression><![CDATA[$P{seccionEstudiante}]]></expression>
+		</element>
+	</title>
+	<columnHeader height="25">
+		<element kind="rectangle" uuid="7b8a176e-31a1-44aa-8ad7-db40c6e061af" mode="Opaque" x="0" y="0" width="555" height="25" backcolor="#E0E0E0"/>
+		<element kind="staticText" uuid="2a062dfe-8d5c-44b0-8b68-f241dd68dc9b" x="0" y="0" width="150" height="25" bold="true" hTextAlign="Center">
+			<text><![CDATA[Curso]]></text>
+		</element>
+		<element kind="staticText" uuid="7eea3bb3-5116-4da8-9064-13bdec1f184a" x="150" y="0" width="75" height="25" bold="true" hTextAlign="Center">
+			<text><![CDATA[Nota 1]]></text>
+		</element>
+		<element kind="staticText" uuid="a5a04ac7-1696-4dba-b3bb-70c31a7cb382" x="225" y="0" width="75" height="25" bold="true" hTextAlign="Center">
+			<text><![CDATA[Nota 2]]></text>
+		</element>
+		<element kind="staticText" uuid="e4be082b-eaca-4d52-bf1c-8152b233feee" x="300" y="0" width="75" height="25" bold="true" hTextAlign="Center">
+			<text><![CDATA[Nota 3]]></text>
+		</element>
+		<element kind="staticText" uuid="c7ebbd4d-a9db-4de8-8bbf-af92b9c3a750" x="375" y="0" width="75" height="25" bold="true" hTextAlign="Center">
+			<text><![CDATA[Nota 4]]></text>
+		</element>
+		<element kind="staticText" uuid="ee115cb3-99dd-4426-940f-a0026926a91b" x="450" y="0" width="105" height="25" bold="true" hTextAlign="Center">
+			<text><![CDATA[Promedio]]></text>
+		</element>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<element kind="textField" uuid="6b117bfa-ce85-4521-a25b-3bbb1704070e" x="0" y="0" width="150" height="20">
+				<expression><![CDATA[$F{nombreCurso}]]></expression>
+			</element>
+			<element kind="textField" uuid="914df589-ec71-43e8-bb30-438afe4af70a" x="150" y="0" width="75" height="20">
+				<expression><![CDATA[$F{nota1}]]></expression>
+			</element>
+			<element kind="textField" uuid="01ad5ab2-6bd8-4ceb-a15a-f41a6f1e3f26" x="225" y="0" width="75" height="20">
+				<expression><![CDATA[$F{nota2}]]></expression>
+			</element>
+			<element kind="textField" uuid="469f5576-a3a0-4206-a943-cd36a58fadeb" x="300" y="0" width="75" height="20">
+				<expression><![CDATA[$F{nota3}]]></expression>
+			</element>
+			<element kind="textField" uuid="38ade5dd-13e1-4b94-9f92-d988c88104bd" x="375" y="0" width="75" height="20">
+				<expression><![CDATA[$F{nota4}]]></expression>
+			</element>
+			<element kind="textField" uuid="5fce07b0-49a7-4bbc-ab78-8b76619ff6c6" x="450" y="0" width="105" height="20">
+				<expression><![CDATA[$F{promedio}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="50"/>
+</jasperReport>

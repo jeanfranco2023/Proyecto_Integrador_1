@@ -28,6 +28,4 @@ public class Cursos {
     private String gradoCurso;
     @OneToMany(mappedBy = "curso", cascade = CascadeType.PERSIST)
     private List<Nota> notas;
-    @OneToMany(mappedBy = "curso", cascade = CascadeType.PERSIST)
-    private List<DetalleNota> detalleNotas;
 }

@@ -3,6 +3,7 @@ package com.app.sistema.matricula.models;
 import java.time.LocalDate;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -30,14 +31,20 @@ public class Alumnos {
     private String dniAlumno;
     private String correoAlumno;
     private String passwordAlumno;
-    private String nombreApoderado;
-
-    @OneToMany(mappedBy = "alumno")
-    private List<Matricula> matriculas;
-
-    @OneToMany(mappedBy = "alumno")
-    private List<Nota> notas;
-
     private String rol;
     private LocalDate fechaNacimiento;
+    private String departamento;
+    private String provincia;
+    private String distrito;
+    private String sexo;
+    private int edad;
+
+    @OneToMany(mappedBy = "alumno", cascade = CascadeType.REMOVE)
+    private List<Padres> padres;
+
+    @OneToMany(mappedBy = "alumno", cascade = CascadeType.REMOVE)
+    private List<Matricula> matriculas;
+
+    @OneToMany(mappedBy = "alumno", cascade = CascadeType.REMOVE)
+    private List<Nota> notas;
 }

@@ -39,11 +39,15 @@ public class CursoService implements IService<Cursos> {
     }
 
     public List<String> obtenerGradosUnico() {
-        return cursoRepository.findDistinctGradoCurso();
+        return cursoRepository.findDistinctGradosDesdeSeccion();
     }
 
     public List<Cursos> obtenerCursosPorGrado(String grado) {
         return cursoRepository.findByGradoCurso(grado);
+    }
+
+    public List<Cursos> obtenerCursosPorAlumno(Integer idAlumno) {
+        return cursoRepository.findCursosByAlumnoId(idAlumno);
     }
 
 }

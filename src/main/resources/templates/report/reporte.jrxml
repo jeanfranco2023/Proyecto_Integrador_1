@@ -3,7 +3,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="NombreEstudiante" class="java.lang.String"/>
 	<parameter name="ApellidoEstudiante" class="java.lang.String"/>
-	<parameter name="FechaDeNacimiento" class="java.sql.Date"/>
+	<parameter name="FechaDeNacimiento" class="java.lang.String"/>
 	<parameter name="CorreoElectronico" class="java.lang.String"/>
 	<parameter name="NombreApoderado" class="java.lang.String"/>
 	<parameter name="Nivel" class="java.lang.String"/>

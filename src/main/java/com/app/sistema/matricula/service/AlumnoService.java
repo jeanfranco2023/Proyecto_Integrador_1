@@ -31,7 +31,7 @@ public class AlumnoService implements IService<Alumnos> {
 
     @Override
     public void insertar(Alumnos alumno) {
-       alumnoRepository.save(alumno);
+        alumnoRepository.save(alumno);
     }
 
     @Override
@@ -67,4 +67,18 @@ public class AlumnoService implements IService<Alumnos> {
                 .collect(Collectors.toList());
     }
 
+    public String ObtenerNivelPorAlumno(Integer id) {
+        return alumnoRepository.findById(id).map(Alumnos::getMatriculas).stream()
+                .flatMap(List::stream)
+                .flatMap(matricula -> matricula.getDetalles().stream())
+                .findFirst()
+                .map(d -> {
+                    if (d.getCurso() != null && d.getCurso().getGradoCurso() != null) {
+                        return d.getCurso().getGradoCurso().toLowerCase().contains("secundaria") ? "Secundaria"
+                                : "Primaria";
+                    } else {
+                        return "Grado no asignado";
+                    }
+                }).orElse("Cursos no asignados");
+    }
 }

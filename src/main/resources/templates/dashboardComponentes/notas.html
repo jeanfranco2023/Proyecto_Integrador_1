@@ -4,22 +4,47 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notas - Dashboard</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
-    <div th:fragment="componente" th:remove="tag">
+<div th:fragment="componente" th:remove="tag">
     <main>
         <section>
             <div th:if="${cursos}">
-                <h2>Lista de Cursos y Notas</h2>
-                <div th:each="curso : ${cursos}">
-                    <div>
-                        <h3 th:text="${curso.nombreCurso}"></h3>
-                        <p th:if="${curso.notas != null}" th:text="'Nota: ' + ${curso.notas}"></p>
-                        <p th:if="${curso.notas == null}">Nota no asignada</p>
-                    </div>
+                <h2 class="text-center">Lista de Cursos y Notas</h2>
+
+                <!-- Mostrar el botón solo una vez, si hay al menos un curso con notas -->
+                <div th:if="${cursos[0].notas != null and !#lists.isEmpty(cursos[0].notas)}" class="mb-3">
+                    <a th:href="@{/alumnos/reporte-notas(idAlumno=${cursos[0].notas[0].alumno.idAlumno})}"
+                       target="_blank"
+                       class="btn btn-sm btn-primary">
+                        Ver Reporte PDF
+                    </a>
+                </div>
+
+                <!-- Lista de cursos y notas -->
+                <div th:each="curso : ${cursos}" class="mb-4">
+                    <h3 th:text="${curso.nombreCurso}"></h3>
+
+                    <table class="table table-bordered table-striped mt-2"
+                           th:if="${curso.notas != null and !#lists.isEmpty(curso.notas)}">
+                        <thead>
+                        <tr>
+                            <th>Bimestre</th>
+                            <th>Nota</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="nota : ${curso.notas}">
+                            <td th:text="${nota.bimestre}"></td>
+                            <td th:text="${nota.valorNota}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <p th:if="${#lists.isEmpty(curso.notas)}">Nota no asignada</p>
                 </div>
             </div>
+
             <div th:if="${cursos == null or #lists.isEmpty(cursos)}">
                 <p class="fs-1 fw-bold mt-3 text-center">Bienvenido, aún no se te asignan tus cursos</p>
             </div>

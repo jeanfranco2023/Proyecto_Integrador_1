@@ -2,6 +2,7 @@ package com.app.sistema.matricula.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,10 +12,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.app.sistema.matricula.dto.CursoNotasDTO;
 import com.app.sistema.matricula.dto.DocenteDTO;
 import com.app.sistema.matricula.dto.Login;
 import com.app.sistema.matricula.dto.MatriculaDTO;
+import com.app.sistema.matricula.dto.NotaDTO;
 import com.app.sistema.matricula.models.Administrador;
 import com.app.sistema.matricula.models.Alumnos;
 import com.app.sistema.matricula.models.Cursos;
@@ -26,8 +30,8 @@ import com.app.sistema.matricula.service.AdministradorService;
 import com.app.sistema.matricula.service.AlumnoService;
 import com.app.sistema.matricula.service.CursoService;
 import com.app.sistema.matricula.service.DocenteService;
-import com.app.sistema.matricula.service.MatriculaService;
 import com.app.sistema.matricula.service.SeccionService;
+import com.app.sistema.matricula.service.UbigeoService;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -47,7 +51,7 @@ public class UsuarioController {
     @Autowired
     private SeccionService seccionService;
     @Autowired
-    private MatriculaService matriculaService;
+    private UbigeoService ubigeoService;
 
     @GetMapping("/login")
     public String login(Model model) {
@@ -111,51 +115,84 @@ public class UsuarioController {
             @RequestParam(required = false) String modo,
             @ModelAttribute("rol") String rol) {
 
-        model.addAttribute("grados", cursoRepository.findDistinctGradoCurso());
+        model.addAttribute("grados", cursoRepository.findDistinctGradosDesdeSeccion());
         model.addAttribute("periodos", List.of("2025-I", "2025-II"));
         model.addAttribute("seccion", seccion);
 
+        // --- Sección matrícula ---
         if ("matricula".equals(seccion)) {
             MatriculaDTO dto = new MatriculaDTO();
+            dto.setAlumno(new Alumnos()); // Previene null en modo nuevo
 
-            if ("editar".equalsIgnoreCase(modo)) {
-                if (id != null) {
-                    Alumnos alumno = alumnoService.buscarPorId(id);
-                    Optional<Integer> idMatricula = alumno.getMatriculas().stream()
-                            .map(Matricula::getIdMatricula)
-                            .findFirst();
-                    if (idMatricula.isPresent()) {
-                        Matricula matricula = matriculaService.buscarPorId(idMatricula.get());
-                        if (matricula != null) {
-                            dto.setIdMatricula(matricula.getIdMatricula());
-                            dto.setAlumno(matricula.getAlumno());
-                            dto.setFechaMatricula(matricula.getFechaMatricula());
-                            dto.setPeriodoAcademico(matricula.getPeriodoAcademico());
-                        }
+            if ("editar".equalsIgnoreCase(modo) && id != null) {
+                Alumnos alumno = alumnoService.buscarPorId(id);
+                if (alumno != null && alumno.getMatriculas() != null && !alumno.getMatriculas().isEmpty()) {
+                    Optional<Matricula> matriculaOpt = alumno.getMatriculas().stream().findFirst();
+                    if (matriculaOpt.isPresent()) {
+                        Matricula matricula = matriculaOpt.get();
+                        dto.setIdMatricula(matricula.getIdMatricula());
+                        dto.setAlumno(matricula.getAlumno());
+                        dto.setFechaMatricula(matricula.getFechaMatricula());
+                        dto.setPeriodoAcademico(matricula.getPeriodoAcademico());
                     }
-                } else {
-                    model.addAttribute("error", "No se proporcionó un ID válido para editar la matrícula.");
                 }
             }
+
+            String depSeleccionado = dto.getAlumno().getDepartamento();
+            String provSeleccionado = dto.getAlumno().getProvincia();
+
+            System.out.println("Departamento seleccionado: " + depSeleccionado);
+            System.out.println("Provincia seleccionada: " + provSeleccionado);
+
+            model.addAttribute("departamentos", ubigeoService.getDepartamentos());
+
+            model.addAttribute("provincias",
+                    depSeleccionado != null && !depSeleccionado.isEmpty()
+                            ? ubigeoService.getProvincias(depSeleccionado)
+                            : List.of());
+
+            model.addAttribute("distritos",
+                    depSeleccionado != null && !depSeleccionado.isEmpty()
+                            && provSeleccionado != null && !provSeleccionado.isEmpty()
+                                    ? ubigeoService.getDistritos(depSeleccionado, provSeleccionado)
+                                    : List.of());
 
             model.addAttribute("matriculaDTO", dto);
             return "dashboard";
         }
 
+        // --- Otras secciones ---
         model.addAttribute("matriculaDTO", new MatriculaDTO());
         model.addAttribute("curso", new Cursos());
         model.addAttribute("docentes", new DocenteDTO());
         model.addAttribute("docente", docenteService.listar());
         model.addAttribute("alumnos", alumnoService.listar());
         model.addAttribute("detalleCursoSeccion", new DetalleCursoSeccion());
-        model.addAttribute("listaCursos", cursoRepository.findDistinctNombreCurso());
+        model.addAttribute("listaCursos", cursoRepository.findCursosUnicos());
         model.addAttribute("secciones", seccionService.listar());
 
+        // --- Rol del usuario ---
         switch (rol) {
             case "Alumno" -> {
                 Object alumnoAttr = session.getAttribute("alumnoId");
                 if (alumnoAttr instanceof Integer alumnoId) {
                     List<Cursos> cursos = alumnoService.obtenerCursosPorId(alumnoId);
+                    List<CursoNotasDTO> listaDTO = cursos.stream().map(curso -> {
+                        CursoNotasDTO dto = new CursoNotasDTO();
+                        dto.setNombreCurso(curso.getNombreCurso());
+
+                        List<NotaDTO> notasDTO = curso.getNotas().stream().map(nota -> {
+                            NotaDTO n = new NotaDTO();
+                            n.setBimestre(nota.getBimestre());
+                            n.setValorNota(nota.getValorNota());
+                            return n;
+                        }).collect(Collectors.toList());
+
+                        dto.setNotas(notasDTO);
+                        return dto;
+                    }).collect(Collectors.toList());
+
+                    model.addAttribute("cursosNotas", listaDTO);
                     model.addAttribute("cursos", cursos);
                 }
             }
@@ -188,6 +225,18 @@ public class UsuarioController {
         return null;
     }
 
+    @GetMapping("/ubigeo/provincias")
+    @ResponseBody
+    public List<String> obtenerProvincias(@RequestParam String departamento) {
+        return ubigeoService.getProvincias(departamento);
+    }
+
+    @GetMapping("/ubigeo/distritos")
+    @ResponseBody
+    public List<String> obtenerDistritos(@RequestParam String departamento, @RequestParam String provincia) {
+        return ubigeoService.getDistritos(departamento, provincia);
+    }
+
     @ModelAttribute("usuarioIniciado")
     public Object usuarioIniciado(HttpSession session) {
         if (session.getAttribute("alumnoId") != null) {
@@ -201,4 +250,5 @@ public class UsuarioController {
         }
         return "";
     }
+
 }

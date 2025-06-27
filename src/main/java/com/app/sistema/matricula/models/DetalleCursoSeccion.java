@@ -23,8 +23,9 @@ public class DetalleCursoSeccion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String nombreCurso;
-    private int anio;
+    @ManyToOne
+    @JoinColumn(name = "curso_id")
+    private Cursos curso;
 
     @ManyToOne
     @JoinColumn(name = "docente_id")

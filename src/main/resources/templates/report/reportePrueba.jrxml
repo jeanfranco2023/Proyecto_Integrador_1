@@ -1,0 +1,168 @@
+<!-- Created with Jaspersoft Studio version 7.0.3.final using JasperReports Library version 7.0.3-41034ca841d452f3305ba55b9042260aaa1ab5dd  -->
+<jasperReport name="ReporteMatricula" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<parameter name="LogoColegio" class="java.io.InputStream"/>
+	<parameter name="Nivel" class="java.lang.String"/>
+	<parameter name="Grado" class="java.lang.String"/>
+	<parameter name="DNI" class="java.lang.String"/>
+	<parameter name="Seccion" class="java.lang.String"/>
+	<parameter name="Apellidos" class="java.lang.String"/>
+	<parameter name="nombre" class="java.lang.String"/>
+	<parameter name="fecha de nacimiento" class="java.lang.String"/>
+	<parameter name="Departamento" class="java.lang.String"/>
+	<parameter name="provincia" class="java.lang.String"/>
+	<parameter name="NombrePadres" class="java.lang.String"/>
+	<parameter name="telefono padres" class="java.lang.String"/>
+	<parameter name="dni padres" class="java.lang.String"/>
+	<parameter name="parentesco" class="java.lang.String"/>
+	<parameter name="edad" class="java.lang.String"/>
+	<parameter name="distrito" class="java.lang.String"/>
+	<parameter name="sexo" class="java.lang.String"/>
+	<query language="sql"><![CDATA[]]></query>
+	<background splitType="Stretch"/>
+	<title height="90" splitType="Stretch">
+		<element kind="image" uuid="96de637b-7687-4f8a-a146-0063e88b804e" x="390" y="5" width="80" height="80" onErrorType="Blank">
+			<expression><![CDATA["insignia.png"]]></expression>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="c7a071d6-190d-4297-bbe4-e85e74718d3b" x="-20" y="20" width="604" height="30" forecolor="#252063" rotation="None" underline="true" bold="true" hTextAlign="Center">
+			<text><![CDATA[Ficha de MatrÍcula]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="78f4c5b3-c85e-4372-9eb1-45ef20681fc1" x="140" y="60" width="270" height="20" forecolor="#852537" bold="true" hTextAlign="Center">
+			<text><![CDATA[I.E Victor Raul Haya de la Torre]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box topPadding="0" rightPadding="0">
+				<pen lineWidth="0.0"/>
+			</box>
+		</element>
+	</title>
+	<pageHeader height="44" splitType="Stretch">
+		<element kind="line" uuid="b60dd0ee-cc38-480c-af9f-df9d9b06a782" x="-20" y="0" width="605" height="2"/>
+		<element kind="staticText" uuid="576cd8f6-ce59-40d5-a9a7-bb7b6534ea24" mode="Opaque" x="-20" y="10" width="594" height="34" forecolor="#FFFFFF" backcolor="#941B3D" bold="true" hTextAlign="Center">
+			<text><![CDATA[FICHA DE DATOS PERSONALES ON-LINE]]></text>
+			<box topPadding="10" bottomPadding="1" rightPadding="0">
+				<pen lineColor="#8F1B3C"/>
+			</box>
+		</element>
+	</pageHeader>
+	<detail>
+		<band height="540" splitType="Stretch">
+			<element kind="rectangle" uuid="3adfe388-be6e-488b-838b-df06a351f47f" x="20" y="20" width="520" height="520"/>
+			<element kind="rectangle" uuid="38871862-ee4b-46b1-b2da-66ac0fd66983" x="40" y="30" width="350" height="20" backcolor="#FFFFFF"/>
+			<element kind="staticText" uuid="dce56cac-b363-421b-821d-5a10e721a44c" x="40" y="30" width="140" height="20" bold="true">
+				<text><![CDATA[1-MATRICULADO EN:]]></text>
+				<box topPadding="3" leftPadding="5" rightPadding="0"/>
+			</element>
+			<element kind="staticText" uuid="9b0e5343-c9a5-463a-92f5-8542fb751c01" x="47" y="62" width="42" height="18">
+				<text><![CDATA[NIVEL:]]></text>
+			</element>
+			<element kind="staticText" uuid="701fe174-28ca-48aa-9514-a628178057cb" x="47" y="80" width="42" height="18">
+				<text><![CDATA[GRADO:]]></text>
+			</element>
+			<element kind="staticText" uuid="c7fe7d80-9405-4e09-8fff-fa93ae48ce76" x="192" y="80" width="62" height="22">
+				<text><![CDATA[SECCIÓN:]]></text>
+			</element>
+			<element kind="staticText" uuid="6c832dc2-ee2e-46fa-8adb-7edcf36d3d74" x="192" y="62" width="42" height="18">
+				<text><![CDATA[DNI:]]></text>
+			</element>
+			<element kind="rectangle" uuid="b27aef13-f62c-4e25-8762-6b2372e92c0e" x="40" y="102" width="350" height="20"/>
+			<element kind="staticText" uuid="52b82997-bda2-4f54-82c0-6adf9e6d5c13" x="40" y="100" width="350" height="20" bold="true">
+				<text><![CDATA[2-DATOS PERSONALES DEL ESTUDIANTE:]]></text>
+				<box topPadding="3" leftPadding="5"/>
+			</element>
+			<element kind="rectangle" uuid="c1784785-ed4a-48ca-8b35-2bcab4c755ba" x="44" y="256" width="350" height="20"/>
+			<element kind="staticText" uuid="c55fa3f9-e274-4f15-9f5b-ab0690e12453" x="47" y="129" width="136" height="22">
+				<text><![CDATA[APELLIDOS:]]></text>
+			</element>
+			<element kind="staticText" uuid="1e97b723-ea96-4f09-8088-572818f316f7" x="47" y="151" width="136" height="22">
+				<text><![CDATA[NOMBRES:]]></text>
+			</element>
+			<element kind="staticText" uuid="b71b982f-dc7e-4dbe-9c75-d146ef483989" x="47" y="174" width="136" height="22">
+				<text><![CDATA[F. NACIMIENTO:]]></text>
+			</element>
+			<element kind="staticText" uuid="6f3a0873-4a0e-4b28-8bc5-47d0c666706a" x="47" y="197" width="136" height="22">
+				<text><![CDATA[PROVINCIA:]]></text>
+			</element>
+			<element kind="staticText" uuid="0a939a18-e1c6-4e25-9959-c3cf231e804d" x="47" y="219" width="136" height="22">
+				<text><![CDATA[SEXO:]]></text>
+			</element>
+			<element kind="staticText" uuid="790fddf1-3b32-4e0c-9815-433bb90f4a52" x="274" y="174" width="136" height="22">
+				<text><![CDATA[DEPARTAMENTO:]]></text>
+			</element>
+			<element kind="staticText" uuid="0773ee95-63fd-4442-8724-cc37b4e49f23" x="274" y="197" width="136" height="22">
+				<text><![CDATA[DISTRITO:]]></text>
+			</element>
+			<element kind="staticText" uuid="f0776666-248e-49e1-8f62-faa9f080b91b" x="274" y="220" width="136" height="22">
+				<text><![CDATA[EDAD:]]></text>
+			</element>
+			<element kind="staticText" uuid="54111293-7f49-41c8-a180-3b15d5ad06b9" x="44" y="256" width="350" height="20" bold="true">
+				<text><![CDATA[3-DATOS DE LOS PADRES Y/O APODERADOS:]]></text>
+				<box topPadding="3" leftPadding="5"/>
+			</element>
+			<element kind="staticText" uuid="82d6eb41-018f-4dec-93f1-56a607c8aa4d" x="44" y="286" width="136" height="23">
+				<text><![CDATA[NOMBRES Y APELLIDOS:]]></text>
+			</element>
+			<element kind="staticText" uuid="fc347854-475b-4ef6-907b-754b20221716" x="44" y="309" width="136" height="22">
+				<text><![CDATA[TELÉFONO:]]></text>
+			</element>
+			<element kind="staticText" uuid="f6872ad6-de70-407b-a3e3-caaf5f735c5c" x="44" y="331" width="136" height="23">
+				<text><![CDATA[DNI:]]></text>
+			</element>
+			<element kind="staticText" uuid="79b7d56d-c817-4ce0-9e7e-26c36b3f612f" x="44" y="354" width="136" height="22">
+				<text><![CDATA[PARENTESCO:]]></text>
+			</element>
+			<element kind="textField" uuid="7e60228f-509d-49aa-9c52-9f3810567afa" x="89" y="62" width="100" height="18">
+				<expression><![CDATA[$P{Nivel}]]></expression>
+			</element>
+			<element kind="textField" uuid="ab280574-589c-4a81-8e11-9c622a47f728" x="89" y="80" width="100" height="18">
+				<expression><![CDATA[$P{Grado}]]></expression>
+			</element>
+			<element kind="textField" uuid="0c41be1d-7795-490b-ba2f-8f1b053dea2f" x="261" y="62" width="100" height="18">
+				<expression><![CDATA[$P{DNI}]]></expression>
+			</element>
+			<element kind="textField" uuid="e4cff17d-0f91-44fc-9487-f8636edbd843" x="261" y="80" width="100" height="21">
+				<expression><![CDATA[$P{Seccion}]]></expression>
+			</element>
+			<element kind="textField" uuid="5db1b177-2a6e-476b-a12f-6cba5ee6279b" x="183" y="129" width="127" height="22">
+				<expression><![CDATA[$P{Apellidos}]]></expression>
+			</element>
+			<element kind="textField" uuid="0a777902-e775-4984-8422-43afe2ff27c8" x="183" y="151" width="127" height="22">
+				<expression><![CDATA[$P{nombre}]]></expression>
+			</element>
+			<element kind="textField" uuid="12dbb3f0-3db1-417f-a90a-0761e66afece" x="410" y="174" width="90" height="22">
+				<expression><![CDATA[$P{Departamento}]]></expression>
+			</element>
+			<element kind="textField" uuid="52ee6550-028f-4b92-acb0-cb5cee193f50" x="183" y="174" width="91" height="22">
+				<expression><![CDATA[$P{fecha de nacimiento}]]></expression>
+			</element>
+			<element kind="textField" uuid="630be288-450a-4f46-a0a0-fe388dd75496" x="183" y="197" width="91" height="22">
+				<expression><![CDATA[$P{provincia}]]></expression>
+			</element>
+			<element kind="textField" uuid="749e51b2-6211-4236-87c0-48f62db65910" x="183" y="219" width="91" height="22">
+				<expression><![CDATA[$P{sexo}]]></expression>
+			</element>
+			<element kind="textField" uuid="3b447e8a-f4f4-4e28-897e-a92dea9a58c9" x="410" y="197" width="90" height="22">
+				<expression><![CDATA[$P{distrito}]]></expression>
+			</element>
+			<element kind="textField" uuid="cfef919b-9f15-45ab-af89-0a44a8e0f768" x="410" y="220" width="90" height="22">
+				<expression><![CDATA[$P{edad}]]></expression>
+			</element>
+			<element kind="textField" uuid="94e0376b-9d18-48d8-92da-1af274dc9f92" x="180" y="286" width="122" height="23">
+				<expression><![CDATA[$P{NombrePadres}]]></expression>
+			</element>
+			<element kind="textField" uuid="95d4b425-99a5-4a80-9578-1a515ec13e72" x="180" y="309" width="122" height="23">
+				<expression><![CDATA[$P{telefono padres}]]></expression>
+			</element>
+			<element kind="textField" uuid="5b12f236-5383-4b09-9a40-fddbdbd366d7" x="180" y="331" width="122" height="23">
+				<expression><![CDATA[$P{dni padres}]]></expression>
+			</element>
+			<element kind="textField" uuid="d0bd5b2b-e0a5-4793-a768-69dc9dea0563" x="180" y="353" width="122" height="23">
+				<expression><![CDATA[$P{parentesco}]]></expression>
+			</element>
+		</band>
+	</detail>
+	<pageFooter height="54" splitType="Stretch"/>
+</jasperReport>

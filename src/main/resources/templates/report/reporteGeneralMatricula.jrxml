@@ -1,0 +1,118 @@
+<jasperReport name="ReporteGeneralMatricula" language="java" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+
+    <!-- Campos del alumno -->
+    <field name="nombre" class="java.lang.String"/>
+    <field name="Apellidos" class="java.lang.String"/>
+    <field name="fecha de nacimiento" class="java.lang.String"/>
+    <field name="DNI" class="java.lang.String"/>
+    <field name="sexo" class="java.lang.String"/>
+    <field name="edad" class="java.lang.String"/>
+    <field name="Departamento" class="java.lang.String"/>
+    <field name="provincia" class="java.lang.String"/>
+    <field name="distrito" class="java.lang.String"/>
+    <field name="NombrePadres" class="java.lang.String"/>
+    <field name="telefono padres" class="java.lang.String"/>
+    <field name="dni padres" class="java.lang.String"/>
+    <field name="parentesco" class="java.lang.String"/>
+    <field name="Nivel" class="java.lang.String"/>
+    <field name="Grado" class="java.lang.String"/>
+    <field name="Seccion" class="java.lang.String"/>
+
+    <title height="180">
+        <element kind="staticText" uuid="c7a071d6-190d-4297-bbe4-e85e74718d3b" x="-20" y="20" width="604" height="30" forecolor="#252063" rotation="None" underline="true" bold="true" hTextAlign="Center">
+			<text><![CDATA[Ficha de MatrÍcula]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+		</element>
+		<element kind="staticText" uuid="78f4c5b3-c85e-4372-9eb1-45ef20681fc1" x="140" y="60" width="270" height="20" forecolor="#852537" bold="true" hTextAlign="Center">
+			<text><![CDATA[I.E Victor Raul Haya de la Torre]]></text>
+			<property name="com.jaspersoft.studio.unit.width" value="px"/>
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<box topPadding="0" rightPadding="0">
+				<pen lineWidth="0.0"/>
+			</box>
+        </element>        
+        <element kind="staticText" x="10" y="90" width="130" height="20">
+            <text><![CDATA[Nombres:]]></text>
+        </element>
+        <element kind="textField"  x="150" y="90" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+        </element>
+
+        <element kind="staticText"  x="10" y="115" width="130" height="20">
+            <text><![CDATA[Apellidos:]]></text>
+        </element>
+        <element kind="textField" x="150" y="115" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{Apellidos}]]></textFieldExpression>
+        </element>
+
+        <element kind="staticText"  x="10" y="140" width="130" height="20">
+            <text><![CDATA[DNI:]]></text>
+        </element>
+        <element kind="textField"  x="150" y="140" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{DNI}]]></textFieldExpression>
+        </element>
+    </title>
+
+    <detail height="260">
+        <element kind="staticText"  x="10" y="0" width="130" height="20">
+            <text><![CDATA[Fecha Nacimiento:]]></text>
+        </element>
+        <element kind="textField"  x="150" y="0" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{"fecha de nacimiento"}]]></textFieldExpression>
+        </element>
+
+        <element kind="staticText"  x="10" y="25" width="130" height="20">
+            <text><![CDATA[Sexo:]]></text>
+        </element>
+        <element kind="textField" x="150" y="25" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{sexo}]]></textFieldExpression>
+        </element>
+
+        <element kind="staticText" x="10" y="60" width="300" height="20">
+            <textElement>
+                <font isBold="true"/>
+            </textElement>
+            <text><![CDATA[DATOS DEL APODERADO]]></text>
+        </element>
+
+        <element kind="staticText" x="10" y="90" width="130" height="20">
+            <text><![CDATA[Nombre:]]></text>
+        </element>
+        <element kind="textField" x="150" y="90" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{NombrePadres}]]></textFieldExpression>
+        </element>
+
+        <element kind="staticText" x="10" y="115" width="130" height="20">
+            <text><![CDATA[Teléfono:]]></text>
+        </element>
+        <element kind="textField" x="150" y="115" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{"telefono padres"}]]></textFieldExpression>
+        </element>
+
+        <element kind="staticText" x="10" y="140" width="130" height="20">
+            <text><![CDATA[DNI:]]></text>
+        </element>
+        <element kind="textField" x="150" y="140" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{"dni padres"}]]></textFieldExpression>
+        </element>
+
+        <element kind="staticText" x="10" y="165" width="130" height="20">
+            <text><![CDATA[Parentesco:]]></text>
+        </element>
+        <element kind="textField" x="150" y="165" width="350" height="20">
+            <textFieldExpression><![CDATA[$F{parentesco}]]></textFieldExpression>
+        </element>
+    </detail>
+
+    <pageFooter height="50">
+        <element kind="staticText" x="0" y="10" width="555" height="20">
+            <textElement textAlignment="Center">
+                <font size="10"/>
+            </textElement>
+            <text><![CDATA[Reporte generado automáticamente por el sistema de matrícula]]></text>
+        </element>
+    </pageFooter>
+</jasperReport>

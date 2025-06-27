@@ -1,12 +1,14 @@
 package com.app.sistema.matricula.controller;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
-import java.sql.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -25,11 +27,13 @@ import com.app.sistema.matricula.models.Alumnos;
 import com.app.sistema.matricula.models.Cursos;
 import com.app.sistema.matricula.models.DetalleMatricula;
 import com.app.sistema.matricula.models.Matricula;
+import com.app.sistema.matricula.models.Padres;
 import com.app.sistema.matricula.repository.CursoRepository;
 import com.app.sistema.matricula.repository.MatriculaRepository;
 import com.app.sistema.matricula.service.AlumnoService;
 import com.app.sistema.matricula.service.DetalleMatriculaService;
 import com.app.sistema.matricula.service.MatriculaService;
+import com.app.sistema.matricula.service.PadresService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -38,7 +42,11 @@ import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.design.JasperDesign;
+import net.sf.jasperreports.engine.xml.JRXmlLoader;
 import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRParameter;
 
 @Controller
 @RequestMapping("/matriculas")
@@ -54,11 +62,13 @@ public class MatriculaController {
     private CursoRepository cursoRepository;
     @Autowired
     private DetalleMatriculaService detalleMatriculaService;
+    @Autowired
+    private PadresService padresService;
 
     @GetMapping("/nueva")
     public String mostrarFormulario(Model model) {
         model.addAttribute("matriculaDTO", new MatriculaDTO());
-        model.addAttribute("grados", cursoRepository.findDistinctGradoCurso());
+        model.addAttribute("grados", cursoRepository.findDistinctGradosDesdeSeccion());
         model.addAttribute("periodos", List.of("2025-I", "2025-II"));
         model.addAttribute("fechaHoy", LocalDate.now());
         return "matricula";
@@ -70,189 +80,249 @@ public class MatriculaController {
         return cursoRepository.findByGradoCurso(grado);
     }
 
+    @SuppressWarnings("null")
     @PostMapping("/guardar")
     public String guardarMatricula(@ModelAttribute MatriculaDTO dto,
-            RedirectAttributes redirectAttributes, HttpSession session) {
+            RedirectAttributes redirectAttributes,
+            HttpSession session) {
         try {
             boolean esNuevo = (dto.getIdMatricula() == null);
 
+            Alumnos alumno = dto.getAlumno();
+
             // Validación de DNI
-            if (dto.getAlumno().getDniAlumno() == null || dto.getAlumno().getDniAlumno().trim().isEmpty()) {
+            if (alumno.getDniAlumno() == null || alumno.getDniAlumno().trim().isEmpty()) {
                 redirectAttributes.addFlashAttribute("error", "El DNI es requerido");
                 return "redirect:/usuarios/dashboard?seccion=matricula";
             }
 
-            if (!dto.getAlumno().getDniAlumno().matches("\\d{8}")) {
+            if (!alumno.getDniAlumno().matches("\\d{8}")) {
                 redirectAttributes.addFlashAttribute("error", "DNI debe tener 8 dígitos");
                 return "redirect:/usuarios/dashboard?seccion=matricula";
             }
 
-            // Solo verificar duplicados si es nuevo
-            if (esNuevo && alumnoService.existePorDni(dto.getAlumno().getDniAlumno())) {
+            if (esNuevo && alumnoService.existePorDni(alumno.getDniAlumno())) {
                 redirectAttributes.addFlashAttribute("error",
-                        "El DNI " + dto.getAlumno().getDniAlumno() + " ya está registrado");
+                        "El DNI " + alumno.getDniAlumno() + " ya está registrado");
                 return "redirect:/usuarios/dashboard?seccion=matricula";
             }
 
-            dto.getAlumno().setRol("Alumno");
-            alumnoService.insertar(dto.getAlumno()); // Inserta o actualiza según el id
+            // Rol por defecto
+            alumno.setRol("Alumno");
 
-            Alumnos alumnoGuardado = alumnoService.buscarPorId(dto.getAlumno().getIdAlumno());
+            // Guardar o actualizar alumno
+            alumnoService.insertar(alumno);
+
+            // Buscar el alumno ya persistido para tener el ID correcto
+            Alumnos alumnoGuardado = alumnoService.buscarPorId(alumno.getIdAlumno());
             if (alumnoGuardado == null) {
-                redirectAttributes.addFlashAttribute("error", "Error al recuperar datos del alumno");
+                redirectAttributes.addFlashAttribute("error", "Error al guardar el alumno");
                 return "redirect:/usuarios/dashboard?seccion=matricula";
+            }
+
+            // ------------------------------
+            // Guardar Padres (si vienen)
+            // ------------------------------
+            if (alumno.getPadres() != null && !alumno.getPadres().isEmpty()) {
+                for (Padres padre : alumno.getPadres()) {
+                    padre.setAlumno(alumnoGuardado); // asignar relación
+                    padresService.insertar(padre); // guarda o actualiza
+                }
             }
 
             Matricula matricula = esNuevo ? new Matricula() : matriculaService.buscarPorId(dto.getIdMatricula());
             if (matricula == null && !esNuevo) {
-                redirectAttributes.addFlashAttribute("error", "Matrícula no encontrada para actualizar");
+                redirectAttributes.addFlashAttribute("error", "No se encontró la matrícula a actualizar");
                 return "redirect:/usuarios/dashboard?seccion=matricula";
             }
 
-            matricula.setAlumno(dto.getAlumno());
+            matricula.setAlumno(alumnoGuardado);
             matricula.setFechaMatricula(dto.getFechaMatricula());
             matricula.setPeriodoAcademico(dto.getPeriodoAcademico());
 
             Matricula matriculaGuardada = matriculaRepository.save(matricula);
 
-            // Si es actualización, podrías querer eliminar los cursos previos primero
             if (!esNuevo) {
                 detalleMatriculaService.eliminarPorMatricula(matriculaGuardada.getIdMatricula());
             }
 
             List<Cursos> cursos = cursoRepository.findByGradoCurso(dto.getGrado());
-            cursos.forEach(curso -> {
+            for (Cursos curso : cursos) {
                 DetalleMatricula detalle = new DetalleMatricula();
                 detalle.setMatricula(matriculaGuardada);
                 detalle.setCurso(curso);
                 detalleMatriculaService.insertar(detalle);
-            });
+            }
 
             redirectAttributes.addFlashAttribute("success",
                     "Matrícula " + (esNuevo ? "registrada" : "actualizada") + " exitosamente para "
                             + alumnoGuardado.getNombreAlumno() + " " + alumnoGuardado.getApellidoAlumno());
-
-            return "redirect:/usuarios/dashboard?seccion=matricula";
 
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("error",
                     "Error al registrar/actualizar: "
                             + (e.getMessage() != null ? e.getMessage() : "consulte con el administrador"));
-            return "redirect:/usuarios/dashboard?seccion=matricula";
         }
-    }
 
-    @PostMapping("/editar/{id}")
-    public String editarMatricula(MatriculaDTO dto) {
-        Matricula matricula = matriculaRepository.findById(dto.getIdMatricula()).orElse(null);
-        if (matricula != null) {
-            matricula.setIdMatricula(dto.getIdMatricula());
-            matricula.setAlumno(dto.getAlumno());
-            matricula.setFechaMatricula(dto.getFechaMatricula());
-            matricula.setPeriodoAcademico(dto.getPeriodoAcademico());
-            matriculaRepository.save(matricula);
-        }
         return "redirect:/usuarios/dashboard?seccion=matricula";
-    }
-
-    @PostMapping("/generar/reporte")
-    public String generarReporteMatricula(@ModelAttribute MatriculaDTO dto, Model model) {
-        try {
-            Matricula matricula = matriculaService.buscarPorId(dto.getIdMatricula());
-            if (matricula == null) {
-                model.addAttribute("error", "Matrícula no encontrada");
-                return "redirect:/usuarios/dashboard?seccion=matricula";
-            }
-
-            model.addAttribute("matricula", matricula);
-            model.addAttribute("detalleMatriculas",
-                    detalleMatriculaService.buscarPorId(matricula.getIdMatricula()));
-            return "reporteMatricula";
-
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al generar el reporte: " + e.getMessage());
-            return "redirect:/usuarios/dashboard?seccion=matricula";
-        }
     }
 
     @GetMapping("/reporte/pdf")
     public void generarFichaMatricula(@RequestParam Integer id, HttpServletResponse response) throws Exception {
 
-        // 1. Cargar y compilar el archivo .jrxml
-        InputStream reporteStream = getClass().getResourceAsStream("/templates/report/reporte.jrxml");
+        InputStream reporteStream = getClass().getClassLoader()
+                .getResourceAsStream("templates/report/reportePrueba.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(reporteStream);
 
-        // 2. Obtener datos del alumno desde tu servicio (ajusta según tu estructura)
         Alumnos alumno = alumnoService.buscarPorId(id);
         if (alumno == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Alumno no encontrado");
             return;
         }
 
-        // 3. Obtener rutas reales de imágenes en /static/img/
         File insignia = new ClassPathResource("static/img/insignia.png").getFile();
-        File foto = new ClassPathResource("static/img/mclovin.jpg").getFile();
 
-        // 4. Construir los parámetros que necesita el .jrxml
         Map<String, Object> parametros = new HashMap<>();
-        parametros.put("NombreEstudiante", alumno.getNombreAlumno());
-        parametros.put("ApellidoEstudiante", alumno.getApellidoAlumno());
-        parametros.put("FechaDeNacimiento", Date.valueOf(alumno.getFechaNacimiento()));
-        parametros.put("CorreoElectronico", alumno.getCorreoAlumno());
-        parametros.put("NombreApoderado", alumno.getNombreApoderado()); // ajusta si necesario
-        parametros.put("Nivel", alumno.getMatriculas().stream()
-            .findFirst()
-            .map(m -> m.getDetalles().stream()
-                .findFirst()
-                .map(d -> {
-                    if (d.getCurso() != null && d.getCurso().getGradoCurso() != null) {
-                        return d.getCurso().getGradoCurso().toLowerCase().contains("secundaria") ? "Secundaria" : "Primaria";
-                    } else {
-                        return "No asignado";
-                    }
-                })
-                .orElse("No asignado"))
-            .orElse("No asignado"));
-        
+
+        // Datos del alumno
+        parametros.put("nombre", alumno.getNombreAlumno() != null ? alumno.getNombreAlumno() : "No asignado");
+        parametros.put("Apellidos", alumno.getApellidoAlumno() != null ? alumno.getApellidoAlumno() : "No asignado");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        parametros.put("fecha de nacimiento",
+                alumno.getFechaNacimiento() != null ? alumno.getFechaNacimiento().format(formatter) : "No asignado");
+
+        parametros.put("DNI", alumno.getDniAlumno() != null ? alumno.getDniAlumno() : "No asignado");
+        parametros.put("correoAlumno", alumno.getCorreoAlumno() != null ? alumno.getCorreoAlumno() : "No asignado");
+        parametros.put("Departamento", alumno.getDepartamento() != null ? alumno.getDepartamento() : "No asignado");
+        parametros.put("provincia", alumno.getProvincia() != null ? alumno.getProvincia() : "No asignado");
+        parametros.put("distrito", alumno.getDistrito() != null ? alumno.getDistrito() : "No asignado");
+        parametros.put("sexo", alumno.getSexo() != null ? alumno.getSexo() : "No asignado");
+        parametros.put("edad", alumno.getEdad() != 0 ? String.valueOf(alumno.getEdad()) : "No asignado");
+
+        // Datos del padre (primer apoderado si existe)
+        Padres padre = (alumno.getPadres() != null && !alumno.getPadres().isEmpty()) ? alumno.getPadres().get(0) : null;
+
+        parametros.put("NombrePadres", padre != null
+                ? (padre.getNombrePadre() + " " + padre.getApellidoPadre())
+                : "No asignado");
+        parametros.put("telefonoPadres", (padre != null && padre.getTelefonoPadre() != null)
+                ? padre.getTelefonoPadre()
+                : "No asignado");
+        parametros.put("dni padres", (padre != null && padre.getDniPadre() != null)
+                ? padre.getDniPadre()
+                : "No asignado");
+        parametros.put("parentesco", (padre != null && padre.getParentesco() != null)
+                ? padre.getParentesco()
+                : "No asignado");
+
+        parametros.put("Nivel", alumnoService.ObtenerNivelPorAlumno(id));
+
         parametros.put("Grado", alumno.getMatriculas().stream()
-            .findFirst()
-            .map(m -> m.getDetalles().stream()
                 .findFirst()
-                .map(d -> d.getSeccion() != null && d.getSeccion().getGradoSeccion() != null ? d.getSeccion().getGradoSeccion() : "No asignado")
-                .orElse("No asignado"))
-            .orElse("No asignado"));
+                .map(m -> m.getDetalles().stream()
+                        .findFirst()
+                        .map(d -> d.getCurso() != null && d.getCurso().getGradoCurso() != null
+                                ? d.getCurso().getGradoCurso()
+                                : "No asignado")
+                        .orElse("No asignado"))
+                .orElse("No asignado"));
 
         parametros.put("Seccion", alumno.getMatriculas().stream()
-            .findFirst()
-            .map(m -> m.getDetalles().stream()
                 .findFirst()
-                .map(d -> d.getSeccion() != null && d.getSeccion().getNombreSeccion() != null ? d.getSeccion().getNombreSeccion() : "No asignado")
-                .orElse("No asignado"))
-            .orElse("No asignado"));
+                .map(m -> m.getDetalles().stream()
+                        .findFirst()
+                        .map(d -> d.getSeccion() != null ? d.getSeccion().getNombreSeccion() : "A")
+                        .orElse("No asignado"))
+                .orElse("No asignado"));
 
-        parametros.put("Turno", alumno.getMatriculas().stream()
-            .findFirst()
-            .map(m -> m.getDetalles().stream()
-                .findFirst()
-                .map(d -> d.getSeccion() != null && d.getSeccion().getTurnoSeccion() != null ? d.getSeccion().getTurnoSeccion() : "No asignado")
-                .orElse("No asignado"))
-            .orElse("No asignado"));
+        parametros.put("LogoColegio", new FileInputStream(insignia)); // Imagen como InputStream
 
-        // 5. Cargar imágenes como rutas absolutas
-        parametros.put("imagenInsignia", insignia.getAbsolutePath());
-        parametros.put("fotoAlumno", foto.getAbsolutePath());
+        // Recomendado: evitar paginación si es un solo reporte simple
+        parametros.put(JRParameter.IS_IGNORE_PAGINATION, Boolean.TRUE);
 
-        // 6. Llenar el reporte (sin datasource, solo parámetros)
+        // Generar reporte
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, new JREmptyDataSource());
 
-        // 7. Configurar respuesta HTTP
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "inline; filename=ficha_matricula.pdf");
-
-        // 8. Exportar reporte al navegador
         JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
     }
 
+    @GetMapping("/reporte/general/pdf")
+    public void generarFichaMatriculaCompleta(HttpServletResponse response) throws Exception {
+        Alumnos alumnoEjemplo = alumnoService.listar().stream().findFirst().orElse(null);
+        if (alumnoEjemplo == null) {
+            response.sendError(HttpServletResponse.SC_NO_CONTENT, "No hay alumnos para mostrar");
+            return;
+        }
+
+        // 1. Cargar plantilla
+        InputStream reporteStream = getClass().getResourceAsStream("/templates/report/reporteGeneralMatricula.jrxml");
+        JasperDesign jasperDesign = JRXmlLoader.load(reporteStream);
+        JasperReport jasperReport = JasperCompileManager.compileReport(jasperDesign);
+
+        // 2. Preparar los datos
+        List<Alumnos> alumnos = alumnoService.listar();
+        List<Map<String, Object>> listaDatos = new ArrayList<>();
+
+        for (Alumnos alumno : alumnos) {
+            Map<String, Object> datos = new HashMap<>();
+
+            datos.put("nombre", alumno.getNombreAlumno());
+            datos.put("Apellidos", alumno.getApellidoAlumno());
+            datos.put("DNI", alumno.getDniAlumno());
+            datos.put("sexo", alumno.getSexo());
+            datos.put("fecha de nacimiento", alumno.getFechaNacimiento() != null
+                    ? alumno.getFechaNacimiento().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+                    : "No asignado");
+            datos.put("edad", String.valueOf(alumno.getEdad()));
+            datos.put("Departamento", alumno.getDepartamento());
+            datos.put("provincia", alumno.getProvincia());
+            datos.put("distrito", alumno.getDistrito());
+
+            // Datos del padre o apoderado
+            Padres padre = (alumno.getPadres() != null && !alumno.getPadres().isEmpty()) ? alumno.getPadres().get(0)
+                    : null;
+            datos.put("NombrePadres",
+                    padre != null ? padre.getNombrePadre() + " " + padre.getApellidoPadre() : "No asignado");
+            datos.put("telefono padres", padre != null ? padre.getTelefonoPadre() : "No asignado");
+            datos.put("dni padres", padre != null ? padre.getDniPadre() : "No asignado");
+            datos.put("parentesco", padre != null ? padre.getParentesco() : "No asignado");
+
+            // Datos académicos
+            datos.put("Nivel", alumnoService.ObtenerNivelPorAlumno(alumno.getIdAlumno()));
+            datos.put("Grado", alumno.getMatriculas().stream()
+                    .findFirst()
+                    .flatMap(m -> m.getDetalles().stream().findFirst()
+                            .map(d -> d.getCurso() != null ? d.getCurso().getGradoCurso() : "No asignado"))
+                    .orElse("No asignado"));
+            datos.put("Seccion", alumno.getMatriculas().stream()
+                    .findFirst()
+                    .flatMap(m -> m.getDetalles().stream().findFirst()
+                            .map(d -> d.getSeccion() != null ? d.getSeccion().getNombreSeccion() : "No asignado"))
+                    .orElse("No asignado"));
+
+            listaDatos.add(datos);
+        }
+
+        // 3. Parámetros del reporte
+        Map<String, Object> parametros = new HashMap<>();
+        File logoFile = new ClassPathResource("static/img/insignia.png").getFile();
+        parametros.put("LogoColegio", new FileInputStream(logoFile));
+
+        // 4. Data source y generación del reporte
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(listaDatos);
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, dataSource);
+
+        // 5. Exportar a PDF
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "inline; filename=reporte_general_matricula.pdf");
+        JasperExportManager.exportReportToPdfStream(jasperPrint, response.getOutputStream());
+
+        System.out.println("Total de alumnos: " + listaDatos.size());
+        listaDatos.forEach(System.out::println);
+    }
 
 }

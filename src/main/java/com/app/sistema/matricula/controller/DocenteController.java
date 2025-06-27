@@ -3,16 +3,20 @@ package com.app.sistema.matricula.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.app.sistema.matricula.dto.DocenteDTO;
+import com.app.sistema.matricula.models.Cursos;
 import com.app.sistema.matricula.models.DetalleCursoSeccion;
 import com.app.sistema.matricula.models.Docentes;
+import com.app.sistema.matricula.models.Seccion;
+import com.app.sistema.matricula.service.CursoService;
 import com.app.sistema.matricula.service.DetalleCursoSeccionService;
 import com.app.sistema.matricula.service.DocenteService;
+import com.app.sistema.matricula.service.SeccionService;
 
 @Controller
 @RequestMapping("/docentes")
@@ -20,6 +24,10 @@ public class DocenteController {
 
     @Autowired
     private DocenteService docenteService;
+    @Autowired
+    private CursoService cursoService;
+    @Autowired
+    private SeccionService seccionService;
 
     @Autowired
     private DetalleCursoSeccionService detalleCursoSeccionService;
@@ -85,8 +93,22 @@ public class DocenteController {
     }
 
     @PostMapping("/asignarCursoSeccion")
-    public String guardar(@ModelAttribute DetalleCursoSeccion detalleCursoSeccion) {
-        detalleCursoSeccionService.insertar(detalleCursoSeccion);
-        return "redirect:/usuarios/dashboard?seccion=lista-docentes";
+    public String guardar(@RequestParam("cursoId") Integer cursoId,
+            @RequestParam("docenteId") Integer docenteId,
+            @RequestParam("seccionId") Integer seccionId) {
+
+        Cursos curso = cursoService.buscarPorId(cursoId);
+        Docentes docente = docenteService.buscarPorId(docenteId);
+        Seccion seccion = seccionService.buscarPorId(seccionId);
+
+        DetalleCursoSeccion detalle = new DetalleCursoSeccion();
+        detalle.setCurso(curso);
+        detalle.setDocente(docente);
+        detalle.setSeccion(seccion);
+
+        detalleCursoSeccionService.insertar(detalle);
+
+        return "redirect:/usuarios/dashboard?seccion=asignar-seccion";
     }
+
 }

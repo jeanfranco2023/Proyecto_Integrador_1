@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Matrícula</title>
+</head>
 <body>
-    <div th:fragment="componente">
+<div th:fragment="componente">
     <div class="container mt-4">
+
         <!-- Mensajes Flash -->
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
         <h2 class="mb-4">Registro de Matrícula</h2>
-        
+
         <form th:action="@{/matriculas/guardar}" method="POST" th:object="${matriculaDTO}">
-            <!-- Sección de datos del alumno -->
+            <!-- Datos del alumno -->
             <input type="hidden" th:field="*{idMatricula}" />
+            <input type="hidden" th:field="*{alumno.idAlumno}" />
+
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5>Datos del Alumno</h5>
@@ -20,49 +27,107 @@
                     <div class="row g-3">
                         <div class="col-md-4">
                             <label for="dniAlumno" class="form-label required-field">DNI</label>
-                            <input type="text" class="form-control" id="dniAlumno" 
-                                   th:field="*{alumno.dniAlumno}" pattern="[0-9]{8}" 
-                                   title="Ingrese 8 dígitos numéricos" required>
+                            <input type="text" class="form-control" id="dniAlumno"
+                                   th:field="*{alumno.dniAlumno}" pattern="[0-9]{8}" required>
                         </div>
                         <div class="col-md-4">
                             <label for="nombreAlumno" class="form-label required-field">Nombres</label>
-                            <input type="text" class="form-control" id="nombreAlumno" 
+                            <input type="text" class="form-control" id="nombreAlumno"
                                    th:field="*{alumno.nombreAlumno}" required>
                         </div>
                         <div class="col-md-4">
                             <label for="apellidoAlumno" class="form-label required-field">Apellidos</label>
-                            <input type="text" class="form-control" id="apellidoAlumno" 
+                            <input type="text" class="form-control" id="apellidoAlumno"
                                    th:field="*{alumno.apellidoAlumno}" required>
                         </div>
-                        
                         <div class="col-md-4">
                             <label for="fechaNacimiento" class="form-label required-field">Fecha de Nacimiento</label>
-                            <input type="date" class="form-control" id="fechaNacimiento" 
-                                   th:field="*{alumno.fechaNacimiento}" required>
+                            <input type="date"
+                                   th:field="*{alumno.fechaNacimiento}"
+                                   id="fechaNacimiento"
+                                   class="form-control"
+                                   required />
                         </div>
-                        
                         <div class="col-md-4">
                             <label for="correoAlumno" class="form-label required-field">Correo Electrónico</label>
-                            <input type="email" class="form-control" id="correoAlumno" 
+                            <input type="email" class="form-control" id="correoAlumno"
                                    th:field="*{alumno.correoAlumno}" required>
                         </div>
-                        
                         <div class="col-md-4">
                             <label for="passwordAlumno" class="form-label required-field">Contraseña</label>
-                            <input type="password" class="form-control" id="passwordAlumno" 
-                                   th:field="*{alumno.passwordAlumno}" minlength="6" required>
+                            <input type="password" class="form-control" id="passwordAlumno"
+                                   th:field="*{alumno.passwordAlumno}" required minlength="6">
                         </div>
-                        
-                        <div class="col-12">
-                            <label for="nombreApoderado" class="form-label required-field">Nombre del Apoderado</label>
-                            <input type="text" class="form-control" id="nombreApoderado" 
-                                   th:field="*{alumno.nombreApoderado}" required>
+                        <!-- Departamentos -->
+                        <div class="col-md-4">
+                            <label for="departamento" class="form-label">Departamento</label>
+                            <select id="departamento" th:field="*{alumno.departamento}" class="form-select">
+                                <option value="">Seleccione un departamento</option>
+                                <option th:each="dep : ${departamentos}" th:value="${dep}" th:text="${dep}"></option>
+                            </select>
+                        </div>
+                        <!-- Provincias -->
+                        <div class="col-md-4">
+                            <label for="provincia" class="form-label">Provincia</label>
+                            <select id="provincia" th:field="*{alumno.provincia}" class="form-select">
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
+                        <!-- Distritos -->
+                        <div class="col-md-4">
+                            <label for="distrito" class="form-label">Distrito</label>
+                            <select id="distrito" th:field="*{alumno.distrito}" class="form-select">
+                                <option value="">Seleccione un distrito</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sexo" class="form-label">Sexo</label>
+                            <select class="form-select" id="sexo" th:field="*{alumno.sexo}">
+                                <option value="">Seleccione...</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="edad" class="form-label">Edad</label>
+                            <input type="number" class="form-control" id="edad" th:field="*{alumno.edad}">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sección de datos de matrícula -->
+            <!-- Datos del padre/apoderado -->
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Datos del Apoderado</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label for="nombrePadre" class="form-label required-field">Nombres</label>
+                            <input type="text" class="form-control" id="nombrePadre" th:field="*{alumno.padres[0].nombrePadre}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="apellidoPadre" class="form-label required-field">Apellidos</label>
+                            <input type="text" class="form-control" id="apellidoPadre" th:field="*{alumno.padres[0].apellidoPadre}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="dniPadre" class="form-label required-field">DNI</label>
+                            <input type="text" class="form-control" id="dniPadre" th:field="*{alumno.padres[0].dniPadre}" pattern="[0-9]{8}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="telefonoPadre" class="form-label required-field">Teléfono</label>
+                            <input type="text" class="form-control" id="telefonoPadre" th:field="*{alumno.padres[0].telefonoPadre}" pattern="[0-9]{9}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="parentesco" class="form-label required-field">Parentesco</label>
+                            <input type="text" class="form-control" id="parentesco" th:field="*{alumno.padres[0].parentesco}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Matrícula -->
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5>Datos de Matrícula</h5>
@@ -71,33 +136,29 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label for="fechaMatricula" class="form-label required-field">Fecha de Matrícula</label>
-                            <input type="date" class="form-control" id="fechaMatricula" 
-                                   th:field="*{fechaMatricula}" required>
+                            <input type="date" class="form-control" id="fechaMatricula"
+                                   th:field="*{fechaMatricula}"
+                                   required />
                         </div>
                         <div class="col-md-6">
                             <label for="periodoAcademico" class="form-label required-field">Periodo Académico</label>
                             <select class="form-select" id="periodoAcademico" th:field="*{periodoAcademico}" required>
                                 <option value="">Seleccione...</option>
-                                <option th:each="periodo : ${periodos}" 
-                                        th:value="${periodo}" 
-                                        th:text="${periodo}"></option>
+                                <option th:each="periodo : ${periodos}" th:value="${periodo}" th:text="${periodo}"></option>
                             </select>
                         </div>
                         <div class="col-12">
                             <label for="grado" class="form-label required-field">Grado/Nivel</label>
-                            <select class="form-select" id="grado" th:field="*{grado}" required
-                                    onchange="cargarCursos(this.value)">
+                            <select class="form-select" id="grado" th:field="*{grado}" onchange="cargarCursos(this.value)" required>
                                 <option value="">Seleccione...</option>
-                                <option th:each="grado : ${grados}" 
-                                        th:value="${grado}" 
-                                        th:text="${grado}"></option>
+                                <option th:each="grado : ${grados}" th:value="${grado}" th:text="${grado}"></option>
                             </select>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sección de cursos asignados -->
+            <!-- Cursos -->
             <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
                     <h5>Cursos Asignados</h5>
@@ -117,6 +178,8 @@
             </div>
         </form>
     </div>
-    </div>
+</div>
+<!-- Agrega Bootstrap JS si lo necesitas -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

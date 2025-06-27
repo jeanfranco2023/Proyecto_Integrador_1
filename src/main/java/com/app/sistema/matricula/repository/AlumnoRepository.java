@@ -14,6 +14,4 @@ public interface AlumnoRepository extends JpaRepository<Alumnos, Integer> {
     boolean existsByDniAlumno(String dni);
 
     
-
-    
 }
